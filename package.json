@@ -1,5 +1,5 @@
 {
-  "name": "@johngeorgewright/ts-module",
+  "name": "@johnggeorgewright/esm.dev",
   "version": "5.0.0",
   "description": "TypeScript library template",
   "private": true,
@@ -15,15 +15,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johngeorgewright/ts-module.git"
+    "url": "git+https://github.com/johngeorgewright/esm.dev.git"
   },
   "keywords": [],
   "author": "John Wright <johngeorge.wright@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/johngeorgewright/ts-module/issues"
+    "url": "https://github.com/johngeorgewright/esm.dev/issues"
   },
-  "homepage": "https://github.com/johngeorgewright/ts-module#readme",
+  "homepage": "https://github.com/johngeorgewright/esm.dev#readme",
   "devDependencies": {
     "@commitlint/cli": "19.8.0",
     "@commitlint/config-conventional": "19.8.0",
@@ -31,7 +31,6 @@
     "@types/bun": "latest",
     "husky": "9.1.7",
     "lint-staged": "15.5.1",
-    "nodemon": "3.1.10",
     "prettier": "3.5.3",
     "rimraf": "6.0.1",
     "typescript": "5.8.3"
@@ -42,6 +41,9 @@
     ]
   },
   "dependencies": {
+    "clipanion": "^4.0.0-rc.4",
+    "lodash.debounce": "^4.0.8",
+    "throat": "^6.0.2",
     "tslib": "^2.8.1"
   }
 }
