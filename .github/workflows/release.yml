@@ -37,7 +37,7 @@ jobs:
     permissions:
       packages: write
     with:
-      image-name: johngeorgewright/esm.dev
+      image-name: ghcr.io/johngeorgewright/esm.dev
       image-tag: ${{ needs.publish-npm.outputs.version }}
       registry: ghcr.io
     secrets:
