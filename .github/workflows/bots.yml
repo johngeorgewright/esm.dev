@@ -1,0 +1,17 @@
+name: Bots
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  auto-approve:
+    name: Auto Approve
+    runs-on: ubuntu-latest
+    if: github.actor == 'renovate[bot]' || github.actor == 'dependabot[bot]'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          review-message: '@dependabot merge'
