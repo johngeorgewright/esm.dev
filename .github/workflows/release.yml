@@ -9,6 +9,7 @@ jobs:
     name: NPM
     runs-on: ubuntu-latest
     outputs:
+      new_release_published: ${{ steps.release.outputs.new_release_published }}
       version: ${{ steps.release.outputs.new_release_version }}
     steps:
       - name: Checkout project
@@ -33,6 +34,7 @@ jobs:
 
   push-image:
     needs: [publish-npm]
+    if: needs.publish-npm.outputs.new_release_published == 'true'
     uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
     permissions:
       packages: write
