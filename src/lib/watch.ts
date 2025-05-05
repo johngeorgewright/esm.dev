@@ -8,8 +8,21 @@ export async function watch(
   packagePath: string,
   opts: { registry: string; esmStoragePath: string },
 ) {
-  const { packageRoot } = await getPackageMeta(packagePath)
+  const {
+    name,
+    packageRoot,
+    private: prvte,
+  } = await getPackageMeta(packagePath)
+
+  if (prvte) {
+    console.info(`${name} is a private package... ignoring`)
+    return
+  }
+
   const republishOpts = { ...opts, packagePath }
+
+  await republish(republishOpts)
+
   fsWatch(
     packageRoot,
     { recursive: true },
@@ -18,5 +31,4 @@ export async function watch(
       1_000,
     ),
   )
-  await republish(republishOpts)
 }
