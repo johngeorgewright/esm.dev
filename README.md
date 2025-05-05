@@ -17,7 +17,7 @@ The simplest solution is to use docker-compose. Using the configuration below:
 ```yaml
 services:
   esm.dev:
-    image: johngeorgewright/esm.dev:latest
+    image: ghcr.io/johngeorgewright/esm.dev:latest
     depends_on:
       - esm.sh
       - npm-registry
