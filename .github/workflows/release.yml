@@ -8,6 +8,8 @@ jobs:
   publish-npm:
     name: NPM
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release.outputs.new_release_version }}
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -25,5 +27,19 @@ jobs:
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
+        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  push-image:
+    needs: [publish-npm]
+    uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
+    permissions:
+      packages: write
+    with:
+      image-name: johngeorgewright/esm.dev
+      image-tag: ${{ needs.publish-npm.outputs.version }}
+      registry: ghcr.io
+    secrets:
+      DOCKER_REPO_USERNAME: ${{ github.actor }}
+      DOCKER_REPO_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
