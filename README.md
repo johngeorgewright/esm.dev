@@ -20,7 +20,7 @@ services:
     image: ghcr.io/johngeorgewright/esm.dev:latest
     depends_on:
       - esm.sh
-      - npm-registry
+      - npm
     command:
       - watch
       - --registry
