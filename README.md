@@ -1,19 +1,64 @@
-# @johnggeorgewright/esm.dev
+# esm.dev
 
-This is a template repository for creating a NPM package with Bun
+A set of utils when working with local NPM packages and [esm.sh](https://esm.sh/).
 
-## Setting up
+It expects you to have a local version of ESM.sh and verdaccio running. It will monitoring changes in a configurable set of directories. When it sees any changes, it will unpublish from verdaccio, remove builds & cache from ESM.sh and then re-publish the package.
 
-1. Change all references of `@johnggeorgewright/esm.dev` to your new package name
-1. Also search for references to `@johngeorgewright` & `esm.dev` individually
-1. Remove the `private` property from `package.json` (if you want to publically publish your module)
-1. Search for all references of `secrets.` in the `.github` diectory and make sure you have the appropriate secrets registered in GitHub (Your Repo > Settings > Secrets)
-1. Delete the .github/dependabot.yml file (unless you wish to use that instead of renovate)
-1. Ammend the LICENSE with your name
+## Usage
 
-## Dependency management
+The simplest solution is to use docker-compose. Using the configuration below:
 
-By default, this project's dependencies is kept up-to-date with [renovate](https://www.mend.io/free-developer-tools/renovate/). This project may also be set-up for dependabot too. To do so:
+1. Run the NPM registry: `docker compose up npm`
+1. Login: `npm adduser --registry http://localhost:4873`
+1. Copy the token from your `.npmrc` file (it will look a little like `//localhost:4873/:_authToken=<AUTH_TOKEN>`)
+1. Create a file called `esm.dev.npmrc` with the content `//npm:4873/:_authToken=<AUTH_TOKEN>`
+1. Stop the running docker, and re-run all together: `docker compose up`
 
-1. Remove the `renovate.json` file
-1. `mv .github/.dependabot.yml .github/dependabot.yml`
+```yaml
+services:
+  esm.dev:
+    image: johngeorgewright/esm.dev:latest
+    depends_on:
+      - esm.sh
+      - npm-registry
+    command:
+      - watch
+      - --registry
+      - 'http://npm:4873'
+      - --esm-storage-path
+      - /esmd
+      - /watch/*
+    volumes:
+      # Create an `esm.dev.npmrc` file that will contain something like:
+      # //npm:4873/:_authToken="<YOUR_TOKEN>"
+      - ./esm.dev.npmrc:/home/bun/.npmrc:ro
+      - ./docker-storage/esm/esmd:/esmd
+      # The following are paths to all the packages you wish to auto publish
+      - ./packages/package-1:/watch/package-1:ro
+      - ./packages/package-2:/watch/package-2:ro
+
+  esm.sh:
+    image: ghcr.io/esm-dev/esm.sh:latest
+    environment:
+      - NPM_REGISTRY=http://npm:4873
+      # IMPORTANT!!!
+      # YOu must put in you NPM token here too
+      - NPM_TOKEN=<YOUR_TOKEN>
+      - LOG_LEVEL=debug
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./docker-storage/esm/esmd:/esmd
+
+  npm:
+    image: verdaccio/verdaccio:latest
+    ports:
+      - '4873:4873'
+    volumes:
+      - ./docker-storage/verdaccio/storage:/verdaccio/storage
+      - ./docker-storage/verdaccio/conf:/verdaccio/conf
+
+volumes:
+  verdaccio:
+    driver: local
+```
