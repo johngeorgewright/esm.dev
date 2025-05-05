@@ -1,39 +1,40 @@
 {
-  "name": "@johngeorgewright/ts-module",
+  "name": "@johngeorgewright/esm.dev",
   "version": "5.0.0",
   "description": "TypeScript library template",
   "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./src/cli.ts"
   },
   "scripts": {
-    "build": "bun run clean && tsc",
-    "clean": "rimraf dist",
-    "prepare": "husky"
+    "esm.dev": "bun ./src/cli.ts",
+    "prepare": "husky",
+    "test": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johngeorgewright/ts-module.git"
+    "url": "git+https://github.com/johngeorgewright/esm.dev.git"
   },
   "keywords": [],
   "author": "John Wright <johngeorge.wright@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/johngeorgewright/ts-module/issues"
+    "url": "https://github.com/johngeorgewright/esm.dev/issues"
   },
-  "homepage": "https://github.com/johngeorgewright/ts-module#readme",
+  "homepage": "https://github.com/johngeorgewright/esm.dev#readme",
   "devDependencies": {
     "@commitlint/cli": "19.8.0",
     "@commitlint/config-conventional": "19.8.0",
     "@commitlint/types": "19.8.0",
     "@types/bun": "latest",
+    "@types/lodash.debounce": "^4.0.9",
     "husky": "9.1.7",
     "lint-staged": "15.5.1",
-    "nodemon": "3.1.10",
     "prettier": "3.5.3",
     "rimraf": "6.0.1",
+    "semantic-release": "^24.2.3",
     "typescript": "5.8.3"
   },
   "lint-staged": {
@@ -42,6 +43,11 @@
     ]
   },
   "dependencies": {
+    "clipanion": "^4.0.0-rc.4",
+    "glob": "^11.0.2",
+    "lodash.debounce": "^4.0.8",
+    "npm": "^11.3.0",
+    "throat": "^6.0.2",
     "tslib": "^2.8.1"
   }
 }

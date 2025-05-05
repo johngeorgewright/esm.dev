@@ -1,0 +1,32 @@
+name: Docker
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  decipher:
+    name: Decipher
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.parser.outputs.version }}
+    steps:
+      - name: Parser
+        id: parser
+        uses: johngeorgewright/parse-version-action
+        with:
+          ref: ${{ github.ref }}
+          trim-start: v
+
+  push:
+    needs: [decipher]
+    uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
+    permissions:
+      packages: write
+    with:
+      image-name: johngeorgewright/esm.dev
+      image-tag: ${{ needs.decipher.outputs.version }}
+      registry: ghcr.io
+    secrets:
+      DOCKER_REPO_USERNAME: ${{ github.actor }}
+      DOCKER_REPO_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
