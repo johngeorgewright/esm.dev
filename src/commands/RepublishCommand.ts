@@ -1,3 +1,4 @@
+import { glob } from 'glob'
 import { republish } from '../lib/republish'
 import { ESMCommand } from './ESMCommand'
 
@@ -10,11 +11,9 @@ export class RepublishCommand extends ESMCommand {
   })
 
   override async execute() {
-    await Promise.all(
-      this.packagePaths.map((packagePath) => {
-        this.context.stdout.write(`Republishing ${packagePath}\n`)
-        return republish({ ...this, packagePath })
-      }),
-    )
+    await this.eachPackagePath((packagePath) => {
+      this.context.stdout.write(`Republishing ${packagePath}\n`)
+      return republish({ ...this, packagePath })
+    })
   }
 }

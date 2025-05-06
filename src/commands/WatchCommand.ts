@@ -10,14 +10,9 @@ export class WatchCommand extends ESMCommand {
   })
 
   override async execute() {
-    const packagePaths = (
-      await Promise.all(
-        this.packagePaths.map((packagePath) => glob(packagePath)),
-      )
-    ).flat()
-    for (const packagePath of packagePaths) {
+    await this.eachPackagePath((packagePath) => {
       this.context.stdout.write(`Watching ${packagePath}\n`)
-      watch(packagePath, this)
-    }
+      return watch(packagePath, this)
+    })
   }
 }
