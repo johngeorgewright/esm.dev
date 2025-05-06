@@ -27,7 +27,7 @@ jobs:
         run: bun install
 
       - name: Test
-        run: bun test
+        run: bun run test
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
