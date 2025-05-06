@@ -34,6 +34,9 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          extra_plugins: |
+            @semantic-release/git
 
   push-image:
     needs: [publish-npm]
