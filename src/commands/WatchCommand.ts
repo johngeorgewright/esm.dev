@@ -1,6 +1,5 @@
-import { ESMCommand } from './ESMCommand'
-import { watch } from '../lib/watch'
-import { glob } from 'glob'
+import { ESMCommand } from './ESMCommand.ts'
+import { watch } from '../lib/watch.ts'
 
 export class WatchCommand extends ESMCommand {
   static override paths = [['watch']]

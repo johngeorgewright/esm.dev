@@ -1,6 +1,5 @@
-import { glob } from 'glob'
-import { republish } from '../lib/republish'
-import { ESMCommand } from './ESMCommand'
+import { republish } from '../lib/republish.ts'
+import { ESMCommand } from './ESMCommand.ts'
 
 export class RepublishCommand extends ESMCommand {
   static override paths = [['republish']]
@@ -13,7 +12,7 @@ export class RepublishCommand extends ESMCommand {
   override async execute() {
     await this.eachPackagePath((packagePath) => {
       this.context.stdout.write(`Republishing ${packagePath}\n`)
-      return republish({ ...this, packagePath })
+      return republish(packagePath, this)
     })
   }
 }

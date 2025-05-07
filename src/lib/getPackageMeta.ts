@@ -1,4 +1,4 @@
-import { readFile, stat as getStat, constants } from 'node:fs/promises'
+import { readFile, stat as getStat } from 'node:fs/promises'
 import * as path from 'node:path'
 
 export async function getPackageMeta(
