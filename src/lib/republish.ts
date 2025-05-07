@@ -10,7 +10,6 @@ export async function republish(
   },
 ) {
   const { name, packageRoot } = await getPackageMeta(packagePath)
-  const _opts = { ...opts, name, packageRoot }
-  await unpublish(_opts)
-  await publish(_opts)
+  await unpublish({ ...opts, name })
+  await publish({ ...opts, packageRoot })
 }
