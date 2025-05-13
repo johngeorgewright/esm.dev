@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+bun src/cli.ts wait-for-registry && \
+bun src/cli.ts login && \
+bun src/cli.ts $@
