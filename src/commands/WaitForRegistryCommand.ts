@@ -1,7 +1,7 @@
 import { Command, Option } from 'clipanion'
-import { setTimeout } from 'node:timers/promises'
 import * as t from 'typanion'
 import { RegistrySpecific } from './mixins/RegistrySpecific'
+import { until } from '../lib/until'
 
 export class WaitForRegistryCommand extends RegistrySpecific(Command) {
   static override paths = [['wait-for-registry'], ['wfr']]
@@ -21,16 +21,13 @@ export class WaitForRegistryCommand extends RegistrySpecific(Command) {
   })
 
   override async execute() {
-    const signal = AbortSignal.timeout(this.timeout)
-    while (!signal.aborted) {
-      try {
+    await until({
+      ...this,
+      try: async (signal) => {
         const response = await fetch(this.registry, { signal })
-        if (response.ok) return
-      } catch (error) {}
-      try {
-        await setTimeout(this.interval, { signal })
-      } catch (error) {}
-    }
+        return response.ok
+      },
+    })
     this.context.stderr.write(`${this.registry} is not available\n`)
     return 1
   }
