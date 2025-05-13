@@ -1,4 +1,6 @@
 dist
+docker-storage
+.env
 *.log
 node_modules
 tsconfig.tsbuildinfo

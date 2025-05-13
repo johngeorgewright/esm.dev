@@ -13,7 +13,8 @@ RUN cd /temp/prod && bun install --frozen-lockfile --production
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
 COPY src src
+COPY entrypoint .
 
 # run the app
 USER bun
-ENTRYPOINT [ "bun", "run", "src/cli.ts" ]
+ENTRYPOINT [ "./entrypoint" ]

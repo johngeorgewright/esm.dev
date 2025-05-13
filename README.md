@@ -8,11 +8,7 @@ It expects you to have a local version of ESM.sh and verdaccio running. It will 
 
 The simplest solution is to use docker-compose. Using the configuration below:
 
-1. Run the NPM registry: `docker compose up npm`
-1. Login: `npm adduser --registry http://localhost:4873`
-1. Copy the token from your `.npmrc` file (it will look a little like `//localhost:4873/:_authToken=<AUTH_TOKEN>`)
-1. Create a file called `esm.dev.npmrc` with the content `//npm:4873/:_authToken=<AUTH_TOKEN>`
-1. Stop the running docker, and re-run all together: `docker compose up`
+`docker compose up`
 
 ```yaml
 services:
@@ -21,17 +17,13 @@ services:
     depends_on:
       - esm.sh
       - npm
+    environment:
+      - NPM_REGISTRY=http://npm4873
+      - ESM_STORAGE_PATH=/esmd
     command:
       - watch
-      - --registry
-      - 'http://npm:4873'
-      - --esm-storage-path
-      - /esmd
       - /watch/*
     volumes:
-      # Create an `esm.dev.npmrc` file that will contain something like:
-      # //npm:4873/:_authToken="<YOUR_TOKEN>"
-      - ./esm.dev.npmrc:/home/bun/.npmrc:ro
       - ./docker-storage/esm/esmd:/esmd
       # The following are paths to all the packages you wish to auto publish
       - ./packages/package-1:/watch/package-1:ro
@@ -41,9 +33,7 @@ services:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:
       - NPM_REGISTRY=http://npm:4873
-      # IMPORTANT!!!
-      # You must put in you NPM token here too
-      - NPM_TOKEN=<YOUR_TOKEN>
+      - NPM_TOKEN=fake
       - LOG_LEVEL=debug
     ports:
       - '8080:8080'
@@ -54,11 +44,4 @@ services:
     image: verdaccio/verdaccio:latest
     ports:
       - '4873:4873'
-    volumes:
-      - ./docker-storage/verdaccio/storage:/verdaccio/storage
-      - ./docker-storage/verdaccio/conf:/verdaccio/conf
-
-volumes:
-  verdaccio:
-    driver: local
 ```

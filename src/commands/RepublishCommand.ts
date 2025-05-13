@@ -1,5 +1,5 @@
-import { republish } from '../lib/republish.ts'
 import { ESMCommand } from './ESMCommand.ts'
+import { republish } from '../lib/republish.ts'
 
 export class RepublishCommand extends ESMCommand {
   static override paths = [['republish']]
