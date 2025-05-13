@@ -17,12 +17,11 @@ services:
     depends_on:
       - esm.sh
       - npm
+    environment:
+      - NPM_REGISTRY=http://npm4873
+      - ESM_STORAGE_PATH=/esmd
     command:
       - watch
-      - --registry
-      - 'http://npm:4873'
-      - --esm-storage-path
-      - /esmd
       - /watch/*
     volumes:
       - ./docker-storage/esm/esmd:/esmd
