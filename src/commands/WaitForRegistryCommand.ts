@@ -22,9 +22,7 @@ export class WaitForRegistryCommand extends RegistrySpecific(Command) {
 
   override async execute() {
     const signal = AbortSignal.timeout(this.timeout)
-    let connected = false
-    while (!connected) {
-      if (signal.aborted) break
+    while (!signal.aborted) {
       try {
         const response = await fetch(this.registry, { signal })
         if (response.ok) return
