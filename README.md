@@ -18,7 +18,7 @@ services:
       - esm.sh
       - npm
     environment:
-      - NPM_REGISTRY=http://npm4873
+      - NPM_REGISTRY=http://npm:4873
       - ESM_STORAGE_PATH=/esmd
     command:
       - watch
