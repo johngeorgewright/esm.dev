@@ -1,8 +1,8 @@
 import { Option } from 'clipanion'
-import type { AbstractConstructor } from './AbstractConstructor.ts'
+import type { CommandClass } from './CommandClass.ts'
 import { glob } from 'glob'
 
-export function PackagePathSpecific<T extends AbstractConstructor>(Base: T) {
+export function PackagePathSpecific<T extends CommandClass>(Base: T) {
   abstract class PackagePathSpecific extends Base {
     readonly packagePaths = Option.Rest({
       name: 'packages',

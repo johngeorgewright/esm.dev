@@ -1,9 +1,9 @@
 import { Option } from 'clipanion'
 import { isNumber } from 'typanion'
-import type { AbstractConstructor } from './AbstractConstructor.ts'
+import type { CommandClass } from './CommandClass.ts'
 import { until } from '../../lib/until.ts'
 
-export function Retryable<T extends AbstractConstructor>(Base: T) {
+export function Retryable<T extends CommandClass>(Base: T) {
   abstract class Retryable extends Base {
     readonly timeout = Option.String('-t,--timeout', '10000', {
       description: 'The amount of total ms to keep trying for',
