@@ -1,5 +1,5 @@
 import { Option } from 'clipanion'
-import type { AbstractConstructor } from './AbstractConstructor'
+import type { AbstractConstructor } from './AbstractConstructor.ts'
 import { glob } from 'glob'
 
 export function PackagePathSpecific<T extends AbstractConstructor>(Base: T) {
@@ -16,7 +16,7 @@ export function PackagePathSpecific<T extends AbstractConstructor>(Base: T) {
           this.packagePaths.map((packagePath) => glob(packagePath)),
         )
       ).flat()
-      await Promise.all(packagePaths.map(cb))
+      for (const packagePath of packagePaths) await cb(packagePath)
     }
   }
 
