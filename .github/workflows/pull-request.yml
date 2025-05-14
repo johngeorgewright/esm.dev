@@ -28,3 +28,19 @@ jobs:
 
       - name: Test
         run: bun test
+
+  compose-test:
+    name: Compose Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v2
+
+      - uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: ./test.yaml
+
+      - run: curl 'http://0.0.0.0:8080'
