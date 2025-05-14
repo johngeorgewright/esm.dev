@@ -19,6 +19,8 @@ export async function watch(
     return
   }
 
+  console.info('Watching', packagePath)
+
   await republish(packagePath, opts)
 
   fsWatch(

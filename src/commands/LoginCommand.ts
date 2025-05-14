@@ -1,6 +1,6 @@
 import { Command } from 'clipanion'
 import { spawn } from 'node:child_process'
-import { RegistrySpecific } from './mixins/RegistrySpecific'
+import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 
 export class LoginCommand extends RegistrySpecific(Command) {
   static override paths = [['login']]

@@ -1,19 +1,14 @@
-import * as t from 'typanion'
-import { serve } from '../lib/server'
-import { ESMCommand } from './ESMCommand'
-import { StringOptionWithEnv } from '../options/StringOptionWithEnv'
-import { watch } from '../lib/watch'
+import { serve } from '../lib/server.ts'
+import { ESMDevCommand } from './ESMDevCommand.ts'
+import { StringOptionWithEnv } from '../options/StringOptionWithEnv.ts'
+import { watch } from '../lib/watch.ts'
+import { Servable } from './mixins/Servable.ts'
 
-export class StartCommand extends ESMCommand {
+export class StartCommand extends Servable(ESMDevCommand) {
   static override paths = [['start']]
 
-  static override usage = ESMCommand.Usage({
+  static override usage = ESMDevCommand.Usage({
     description: 'Runs a server and concurrently watches a file system',
-  })
-
-  readonly port = StringOptionWithEnv('PORT', '-p,--port', {
-    description: 'The port to run the server on',
-    validator: t.isNumber(),
   })
 
   readonly esmOrigin = StringOptionWithEnv('ESM_ORIGIN', '-e,--esm-origin', {
@@ -21,12 +16,7 @@ export class StartCommand extends ESMCommand {
   })
 
   override async execute() {
-    await Promise.all([
-      ...this.packagePaths.map((packagePath) => {
-        this.context.stdout.write(`Watching ${packagePath}\n`)
-        return watch(packagePath, this)
-      }),
-      serve(this.port, this.esmOrigin),
-    ])
+    await this.eachPackagePath((packagePath) => watch(packagePath, this))
+    serve(this.port, this.esmOrigin)
   }
 }

@@ -1,6 +1,6 @@
 import { Command } from 'clipanion'
 import escapeStringRegexp from 'escape-string-regexp'
-import { RegistrySpecific } from './mixins/RegistrySpecific'
+import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 
 export class TokenCommand extends RegistrySpecific(Command) {
   static override paths = [['token']]
