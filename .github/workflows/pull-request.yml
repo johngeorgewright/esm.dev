@@ -18,5 +18,13 @@ jobs:
       - name: Install
         run: bun install
 
+      - name: Test Compilation
+        run: tsc
+
+      - uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: ./docker-compose.yml
+          up-flags: --build
+
       - name: Test
-        run: bun run test
+        run: bun test
