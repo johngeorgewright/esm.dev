@@ -11,7 +11,7 @@ export class WaitForRegistryCommand extends Retryable(
     description: 'wait for the registry to be online',
   })
 
-  protected get endpoint() {
+  protected override get endpoint() {
     return this.registry
   }
 }
