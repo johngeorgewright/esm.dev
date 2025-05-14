@@ -15,9 +15,7 @@ services:
       - '3000:3000'
     volumes:
       - ./docker-storage/esm/esmd:/esmd
-      # The following are paths to all the packages you wish to auto publish
-      - ../dmg-composition-pipeline/packages/article:/watch/article:ro
-      - ../dmg-composition-pipeline/packages/compipe-api:/watch/compipe-api:ro
+      - ./test/packages:/watch:ro
   esm.sh:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:
