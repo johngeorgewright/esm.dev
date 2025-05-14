@@ -50,7 +50,7 @@ services:
       - '4873:4873'
 ```
 
-Now that this is running point map your modules to `localhost:3000`:
+Once the above is running point your ESM modules to `localhost:3000`:
 
 ```html
 <script type="importmap">
