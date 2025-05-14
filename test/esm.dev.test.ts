@@ -15,7 +15,7 @@ import { setTimeout } from 'node:timers/promises'
 
 test('access to packages', async () => {
   const response1 = await fetch(
-    `http://localhost:3000/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+    `http://0.0.0.0:3000/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
   )
   expect(await response1.text()).toMatchInlineSnapshot(`
     "/* esm.sh - @esm.dev/package-1@0.0.1 */
@@ -23,7 +23,7 @@ test('access to packages', async () => {
     //# sourceMappingURL=package-1.mjs.map"
   `)
 
-  const response2 = await fetch(`http://localhost:3000/@esm.dev/package-2`)
+  const response2 = await fetch(`http://0.0.0.0:3000/@esm.dev/package-2`)
   expect(await response2.text()).toMatchInlineSnapshot(`
     "/* esm.sh - @esm.dev/package-2@0.0.1 */
     export * from "/@esm.dev/package-2@0.0.1/node/package-2.mjs";
@@ -50,7 +50,7 @@ describe('changed content', async () => {
 
   test('is updated', async () => {
     const response1 = await fetch(
-      `http://localhost:3000/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+      `http://0.0.0.0:3000/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
     )
     expect(await response1.text()).toMatchInlineSnapshot(`
       "/* esm.sh - @esm.dev/package-1@0.0.1 */
