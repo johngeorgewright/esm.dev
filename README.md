@@ -55,8 +55,10 @@ Once the above is running point your ESM modules to `localhost:3000`:
 ```html
 <script type="importmap">
   {
-    "react": "https://esm.sh/react",
-    "package-1": "http://localhost:3000/package-1"
+    "imports": {
+      "react": "https://esm.sh/react",
+      "package-1": "http://localhost:3000/package-1"
+    }
   }
 </script>
 <script type="module">
