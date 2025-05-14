@@ -19,7 +19,7 @@ jobs:
         run: bun install
 
       - name: Test Compilation
-        run: tsc
+        run: bunx tsc
 
       - uses: hoverkraft-tech/compose-action@v2.0.1
         with:
@@ -27,4 +27,6 @@ jobs:
           down-flags: --volumes
 
       - name: Test
-        run: sleep 2 && bun test
+        run: | # shell
+          sleep 5
+          bun test

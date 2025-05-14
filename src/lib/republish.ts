@@ -9,6 +9,7 @@ export async function republish(
     esmStoragePath: string
   },
 ) {
+  console.info(`Republishing ${packagePath}`)
   const { name, packageRoot } = await getPackageMeta(packagePath)
   await unpublish({ ...opts, name })
   await publish({ ...opts, packageRoot })

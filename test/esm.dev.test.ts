@@ -27,7 +27,7 @@ describe('changed content', async () => {
     const json = await Bun.file(filename).json()
     json.exports['.'] = to
     await Bun.write(filename, JSON.stringify(json))
-    await setTimeout(1_500)
+    await setTimeout(5_000)
   }
 
   beforeEach(() => changeMainExport('./src/foos.ts'))

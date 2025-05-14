@@ -10,9 +10,6 @@ export class RepublishCommand extends ESMDevCommand {
   })
 
   override async execute() {
-    await this.eachPackagePath((packagePath) => {
-      this.context.stdout.write(`Republishing ${packagePath}\n`)
-      return republish(packagePath, this)
-    })
+    await this.eachPackagePath((packagePath) => republish(packagePath, this))
   }
 }
