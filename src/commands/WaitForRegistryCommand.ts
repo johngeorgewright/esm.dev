@@ -21,14 +21,17 @@ export class WaitForRegistryCommand extends RegistrySpecific(Command) {
   })
 
   override async execute() {
-    await until({
-      ...this,
-      try: async (signal) => {
-        const response = await fetch(this.registry, { signal })
-        return response.ok
-      },
-    })
-    this.context.stderr.write(`${this.registry} is not available\n`)
-    return 1
+    if (
+      !(await until({
+        ...this,
+        try: async (signal) => {
+          const response = await fetch(this.registry, { signal })
+          return response.ok
+        },
+      }))
+    ) {
+      this.context.stderr.write(`${this.registry} is not available\n`)
+      return 1
+    }
   }
 }

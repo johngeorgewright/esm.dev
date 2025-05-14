@@ -12,10 +12,11 @@ export async function until({
   const signal = AbortSignal.timeout(timeout)
   while (!signal.aborted) {
     try {
-      if (await Try(signal)) return
+      if (await Try(signal)) return true
     } catch (error) {}
     try {
       await setTimeout(interval, { signal })
     } catch (error) {}
   }
+  return false
 }
