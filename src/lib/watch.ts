@@ -1,8 +1,8 @@
 import { watch as fsWatch } from 'node:fs'
 import debounce from 'lodash.debounce'
-import throat from 'throat'
 import { republish } from './republish.ts'
 import { getPackageMeta } from './getPackageMeta.ts'
+import { queue } from './queue.ts'
 
 export async function watch(
   packagePath: string,
@@ -24,9 +24,6 @@ export async function watch(
   fsWatch(
     packageRoot,
     { recursive: true },
-    debounce(
-      throat(1, () => republish(packagePath, opts)),
-      1_000,
-    ),
+    debounce(() => queue(() => republish(packagePath, opts)), 1_000),
   )
 }

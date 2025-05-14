@@ -19,10 +19,14 @@ services:
       - npm
     environment:
       - NPM_REGISTRY=http://npm:4873
+      - ESM_ORIGIN=http://esm.sh:8080
       - ESM_STORAGE_PATH=/esmd
+      - PORT=3000
     command:
-      - watch
+      - start
       - /watch/*
+    ports:
+      - '3000:3000'
     volumes:
       - ./docker-storage/esm/esmd:/esmd
       # The following are paths to all the packages you wish to auto publish
@@ -44,4 +48,19 @@ services:
     image: verdaccio/verdaccio:latest
     ports:
       - '4873:4873'
+```
+
+Now that this is running point map your modules to `localhost:3000`:
+
+```html
+<script type="importmap">
+  {
+    "react": "https://esm.sh/react",
+    "package-1": "http://localhost:3000/package-1"
+  }
+</script>
+<script type="module">
+  import Package1 from 'package1'
+  // ...
+</script>
 ```
