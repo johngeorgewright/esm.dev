@@ -1,6 +1,0 @@
-services:
-  server:
-    image: oven/bun:1
-    command: [bunx, http-server, --port, '8080']
-    ports:
-      - '8080:8080'

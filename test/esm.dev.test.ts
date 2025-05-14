@@ -22,21 +22,17 @@ test('access to packages', async () => {
 })
 
 describe('changed content', async () => {
-  beforeEach(async () => {
+  async function changeMainExport(to: string) {
     const filename = 'test/packages/package-1/package.json'
     const json = await Bun.file(filename).json()
-    json.exports['.'] = './src/foos.ts'
+    json.exports['.'] = to
     await Bun.write(filename, JSON.stringify(json))
     await setTimeout(1_500)
-  })
+  }
 
-  afterEach(async () => {
-    const filename = 'test/packages/package-1/package.json'
-    const json = await Bun.file(filename).json()
-    json.exports['.'] = './src/foo.ts'
-    await Bun.write(filename, JSON.stringify(json))
-    await setTimeout(1_500)
-  })
+  beforeEach(() => changeMainExport('./src/foos.ts'))
+
+  afterEach(() => changeMainExport('./src/foo.ts'))
 
   test('is updated', async () => {
     const response1 = await fetch(
