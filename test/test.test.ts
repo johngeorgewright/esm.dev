@@ -1,7 +1,7 @@
 import { afterAll, expect, test } from 'bun:test'
 import { rm } from 'node:fs/promises'
 
-const mungFile = './things/mung.txt'
+const mungFile = './test/packages/mung.txt'
 
 afterAll(async () => {
   await rm(mungFile)
