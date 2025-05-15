@@ -15,19 +15,17 @@ export function Retryable<T extends CommandClass>(Base: T) {
       validator: isNumber(),
     })
 
-    protected abstract endpoint: string
-
-    override async execute() {
+    protected async retry(endpoint: string) {
       if (
         !(await until({
           ...this,
           try: async (signal) => {
-            const response = await fetch(this.endpoint, { signal })
+            const response = await fetch(endpoint, { signal })
             return response.ok
           },
         }))
       ) {
-        this.context.stderr.write(`${this.endpoint} is not available\n`)
+        this.context.stderr.write(`${endpoint} is not available\n`)
         return 1
       }
     }

@@ -18,5 +18,13 @@ jobs:
       - name: Install
         run: bun install
 
+      - name: Test Compilation
+        run: bunx tsc
+
+      - uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          up-flags: --build
+          down-flags: --volumes
+
       - name: Test
-        run: bun run test
+        run: bun test
