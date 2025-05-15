@@ -1,8 +1,0 @@
-services:
-  foo:
-    image: oven/bun:1
-    volumes:
-      - ./test/packages:/things
-    command: [bunx, http-server, --port, '8080', /things]
-    ports:
-      - '8080:8080'

@@ -10,6 +10,7 @@ services:
       - PORT=3000
     command:
       - start
+      - --legacy-method
       - /watch/*
     ports:
       - '3000:3000'

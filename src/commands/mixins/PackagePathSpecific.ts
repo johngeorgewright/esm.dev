@@ -16,7 +16,7 @@ export function PackagePathSpecific<T extends CommandClass>(Base: T) {
           this.packagePaths.map((packagePath) => glob(packagePath)),
         )
       ).flat()
-      for (const packagePath of packagePaths) await cb(packagePath)
+      await Promise.all(packagePaths.map(cb))
     }
   }
 

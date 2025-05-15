@@ -3,8 +3,9 @@ import { ESMDevCommand } from './ESMDevCommand.ts'
 import { StringOptionWithEnv } from '../options/StringOptionWithEnv.ts'
 import { watch } from '../lib/watch.ts'
 import { Servable } from './mixins/Servable.ts'
+import { Watchable } from './mixins/Watchable.ts'
 
-export class StartCommand extends Servable(ESMDevCommand) {
+export class StartCommand extends Servable(Watchable(ESMDevCommand)) {
   static override paths = [['start']]
 
   static override usage = ESMDevCommand.Usage({
@@ -16,7 +17,7 @@ export class StartCommand extends Servable(ESMDevCommand) {
   })
 
   override async execute() {
-    await this.eachPackagePath((packagePath) => watch(packagePath, this))
     serve(this.port, this.esmOrigin)
+    await this.eachPackagePath((packagePath) => watch(packagePath, this))
   }
 }

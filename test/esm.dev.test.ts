@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
+import { readFile, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
 
 test('access to packages', async () => {
@@ -24,10 +25,10 @@ test('access to packages', async () => {
 describe('changed content', async () => {
   async function changeMainExport(to: string) {
     const filename = 'test/packages/package-1/package.json'
-    const json = await Bun.file(filename).json()
+    const json = JSON.parse(await readFile(filename, 'utf-8'))
     json.exports['.'] = to
-    await Bun.write(filename, JSON.stringify(json))
-    await setTimeout(5_000)
+    await writeFile(filename, JSON.stringify(json))
+    await setTimeout(20_000)
   }
 
   beforeEach(() => changeMainExport('./src/foos.ts'))
