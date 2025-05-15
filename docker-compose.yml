@@ -2,10 +2,10 @@ services:
   esm.dev:
     build:
       context: .
-    depends_on: [esm.sh, npm]
+    depends_on: [esm, npm]
     environment:
       - NPM_REGISTRY=http://npm:4873
-      - ESM_ORIGIN=http://esm.sh:8080
+      - ESM_ORIGIN=http://esm:8080
       - ESM_STORAGE_PATH=/esmd
       - PORT=3000
     command:
@@ -17,7 +17,7 @@ services:
     volumes:
       - ./docker-storage/esm/esmd:/esmd
       - ./test/packages:/watch:ro
-  esm.sh:
+  esm:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:
       - NPM_TOKEN=fake
