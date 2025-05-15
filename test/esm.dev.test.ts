@@ -27,8 +27,8 @@ describe('changed content', async () => {
     const filename = 'test/packages/package-1/package.json'
     const json = JSON.parse(await readFile(filename, 'utf-8'))
     json.exports['.'] = to
-    await writeFile(filename, JSON.stringify(json))
-    await setTimeout(20_000)
+    await writeFile(filename, JSON.stringify(json, null, 2))
+    await setTimeout(15_000)
   }
 
   beforeEach(() => changeMainExport('./src/foos.ts'))
