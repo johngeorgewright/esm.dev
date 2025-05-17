@@ -17,6 +17,14 @@ services:
     volumes:
       - ./docker-storage/esm/esmd:/esmd
       - ./test/packages:/watch:ro
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./package.json
+          target: /app/package.json
   esm:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:

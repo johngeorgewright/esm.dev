@@ -11,8 +11,7 @@
   "scripts": {
     "esm.dev": "bun ./src/cli.ts",
     "prepare": "husky",
-    "start": "docker compose up --build --detach --remove-orphans",
-    "stop": "docker compose down",
+    "start": "docker compose up --watch",
     "test": "tsc"
   },
   "repository": {
