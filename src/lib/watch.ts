@@ -2,9 +2,10 @@ import { watch as fsWatch, watchFile } from 'node:fs'
 import debounce from 'lodash.debounce'
 import { republish } from './republish.ts'
 import { getPackageMeta } from './getPackageMeta.ts'
-import { $ } from 'bun'
 import { readFile, writeFile } from 'node:fs/promises'
 import { queue } from './queue.ts'
+import { createHash } from 'node:crypto'
+import { glob } from 'glob'
 
 export async function watch(
   packagePath: string,
@@ -47,8 +48,15 @@ async function legacyWatch(dirname: string, cb: () => any) {
 async function hashDirectory(dirname: string) {
   return queue(async () => {
     const filename = `/tmp/${dirname.replace(/\//g, '-')}.hash.txt`
-    const newHash =
-      await $`find ${dirname} -type f -exec sha256sum {} + | sort | sha256sum`.text()
+    const files = await glob(`${dirname}/**/*`, { nodir: true })
+    const hashes = await Promise.all(
+      files.map(async (file) => {
+        const contents = await readFile(file, 'utf-8')
+        return createHash('sha256').update(contents).digest('hex')
+      }),
+    )
+    const newHash = hashes.join('')
+
     let previousHash = ''
 
     try {
