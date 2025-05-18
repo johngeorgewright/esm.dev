@@ -11,7 +11,7 @@
   "scripts": {
     "esm.dev": "bun ./src/cli.ts",
     "prepare": "husky",
-    "start": "docker compose up --watch",
+    "start": "docker compose up --build --watch",
     "test": "tsc"
   },
   "repository": {
