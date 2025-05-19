@@ -16,9 +16,9 @@ export function queuedDebounce<Args extends unknown[], R>(
   const debounced = debounce(async (...args: Args) => {
     try {
       const result = await fn(...args)
-      promiseWithResolvers!.resolve(result)
+      promiseWithResolvers?.resolve(result)
     } catch (error: any) {
-      promiseWithResolvers!.reject(error)
+      promiseWithResolvers?.reject(error)
     } finally {
       promiseWithResolvers = undefined
     }
@@ -33,7 +33,7 @@ export function queuedDebounce<Args extends unknown[], R>(
   function start() {
     if (!promiseWithResolvers) {
       promiseWithResolvers = Promise.withResolvers<R>()
-      queue(() => promiseWithResolvers!.promise)
+      queue(async () => promiseWithResolvers?.promise)
     }
   }
 }
