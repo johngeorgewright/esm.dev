@@ -30,8 +30,14 @@ jobs:
           - '4873:4873'
 
     steps:
+      - name: debugging
+        run: ls /home/runner/work/esm.dev/esmd
+
       - name: Checkout project
         uses: actions/checkout@v4
+
+      - name: debugging
+        run: ls /home/runner/work/esm.dev/esmd
 
       - name: Use Bun
         uses: oven-sh/setup-bun@v2
