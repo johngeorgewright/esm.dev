@@ -18,7 +18,7 @@ jobs:
         ports:
           - '8080:8080'
         volumes:
-          - esmd:/esmd
+          - ${{ github.workspace }}/esmd:/esmd
 
       npm:
         image: verdaccio/verdaccio:latest
@@ -46,4 +46,4 @@ jobs:
       - name: Test
         run: bun test
         env:
-          ESM_STORAGE_PATH: esmd
+          ESM_STORAGE_PATH: ${{ github.workspace }}/esmd
