@@ -85,6 +85,6 @@ describe('changed content', async () => {
     const json = JSON.parse(await readFile(filename, 'utf-8'))
     json.exports['.'] = to
     await writeFile(filename, JSON.stringify(json, null, 2))
-    await setTimeout(1_500)
+    await setTimeout(5_500)
   }
 })
