@@ -22,7 +22,7 @@ jobs:
         ports:
           - '8080:8080'
         volumes:
-          - ~/esmd:/esmd
+          - /home/runner/esmd:/esmd
 
       npm:
         image: verdaccio/verdaccio:latest
@@ -31,13 +31,13 @@ jobs:
 
     steps:
       - name: debugging
-        run: ls -la ~/esmd
+        run: ls -la /home/runner/esmd
 
       - name: Checkout project
         uses: actions/checkout@v4
 
       - name: debugging
-        run: ls -la ~/esmd
+        run: ls -la /home/runner/esmd
 
       - name: Use Bun
         uses: oven-sh/setup-bun@v2
@@ -56,4 +56,4 @@ jobs:
       - name: Test
         run: bun test
         env:
-          ESM_STORAGE_PATH: ~/esmd
+          ESM_STORAGE_PATH: /home/runner/esmd

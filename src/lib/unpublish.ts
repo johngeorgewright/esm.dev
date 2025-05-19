@@ -36,7 +36,7 @@ async function deleteESMCache(esmStoragePath: string, name: string) {
     Promise.all(
       paths.map((path) => {
         console.info('Deleting', path)
-        rm(path, { recursive: true })
+        return rm(path, { recursive: true })
       }),
     ),
   )
