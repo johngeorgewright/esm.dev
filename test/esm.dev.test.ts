@@ -7,12 +7,13 @@ import {
   expect,
   test,
 } from 'bun:test'
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile, watch as fsWatch, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
 import { compose } from 'ramda'
 import { serve } from '../src/lib/server.ts'
 import { watch } from '../src/lib/watch.ts'
 import { login } from '../src/lib/login.ts'
+import { until } from '../src/lib/until.ts'
 
 const esmOrigin = process.env.ESM_ORIGIN ?? 'http://localhost:8080'
 const esmStoragePath = process.env.ESM_STORAGE_PATH ?? 'docker-storage/esm/esmd'
@@ -23,8 +24,22 @@ let server: ReturnType<typeof serve>
 let stopWatching: () => void
 
 beforeAll(async () => {
+  if (
+    !(await until({
+      interval: 300,
+      timeout: 10_000,
+      async try(signal) {
+        const response = await fetch(registry, { signal })
+        return response.ok
+      },
+    }))
+  )
+    throw new Error('Registry not available')
+
   await login(registry)
+
   server = serve(port, esmOrigin)
+
   stopWatching = compose(
     await watch('test/packages/package-1', {
       registry,
@@ -83,6 +98,6 @@ describe('changed content', async () => {
     const json = JSON.parse(await readFile(filename, 'utf-8'))
     json.exports['.'] = to
     await writeFile(filename, JSON.stringify(json, null, 2))
-    await setTimeout(5_500)
+    await setTimeout(100)
   }
 })

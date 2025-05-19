@@ -45,3 +45,5 @@ jobs:
 
       - name: Test
         run: bun test
+        env:
+          ESM_STORAGE_PATH: esmd
