@@ -1,11 +1,10 @@
 import { watch as fsWatch, watchFile } from 'node:fs'
-import debounce from 'lodash.debounce'
 import { republish } from './republish.ts'
 import { getPackageMeta } from './getPackageMeta.ts'
 import { readFile, writeFile } from 'node:fs/promises'
-import { queue } from './queue.ts'
 import { createHash } from 'node:crypto'
 import { glob } from 'glob'
+import { queue, queuedDebounce } from './queue.ts'
 
 export async function watch(
   packagePath: string,
@@ -19,26 +18,35 @@ export async function watch(
 
   if (prvte) {
     console.info(`${name} is a private package... ignoring`)
-    return
+    return () => {}
   }
 
   console.info('Watching', packagePath)
 
   const republishPackage = () =>
     republish(packagePath, opts).catch(console.error)
-  const debounceRepublish = debounce(republishPackage, 1_000)
-  await republishPackage()
+  const debounceRepublish = queuedDebounce(republishPackage, 1_000)
+  await queue(republishPackage)
 
-  if (opts.legacyMethod) await legacyWatch(packagePath, debounceRepublish)
-  else fsWatch(packageRoot, { recursive: true }, debounceRepublish)
+  if (opts.legacyMethod) {
+    return await legacyWatch(packagePath, debounceRepublish)
+  } else {
+    const watcher = fsWatch(packageRoot, { recursive: true }, debounceRepublish)
+    return () => watcher.close()
+  }
 }
 
 async function legacyWatch(dirname: string, cb: () => any) {
   const filename = await hashDirectory(dirname)
-  watchFile(filename, cb)
+  const watcher = watchFile(filename, cb)
+  let timer: NodeJS.Timeout | undefined
   beginTimer()
+  return () => {
+    watcher.unref()
+    clearTimeout(timer)
+  }
   function beginTimer() {
-    setTimeout(
+    timer = setTimeout(
       () => hashDirectory(dirname).catch(console.error).finally(beginTimer),
       1_000,
     )
@@ -46,26 +54,24 @@ async function legacyWatch(dirname: string, cb: () => any) {
 }
 
 async function hashDirectory(dirname: string) {
-  return queue(async () => {
-    const filename = `/tmp/${dirname.replace(/\//g, '-')}.hash.txt`
-    const files = await glob(`${dirname}/**/*`, { nodir: true })
-    const hashes = await Promise.all(
-      files.map(async (file) => {
-        const contents = await readFile(file, 'utf-8')
-        return createHash('sha256').update(contents).digest('hex')
-      }),
-    )
-    const newHash = hashes.join('')
+  const filename = `/tmp/${dirname.replace(/\//g, '-')}.hash.txt`
+  const files = await glob(`${dirname}/**/*`, { nodir: true })
+  const hashes = await Promise.all(
+    files.map(async (file) => {
+      const contents = await readFile(file, 'utf-8')
+      return createHash('sha256').update(contents).digest('hex')
+    }),
+  )
+  const newHash = hashes.join('')
 
-    let previousHash = ''
+  let previousHash = ''
 
-    try {
-      previousHash = await readFile(filename, 'utf-8')
-    } catch (error: any) {
-      if (error.code !== 'ENOENT') throw error
-    }
+  try {
+    previousHash = await readFile(filename, 'utf-8')
+  } catch (error: any) {
+    if (error.code !== 'ENOENT') throw error
+  }
 
-    if (newHash !== previousHash) await writeFile(filename, newHash)
-    return filename
-  })
+  if (newHash !== previousHash) await writeFile(filename, newHash)
+  return filename
 }

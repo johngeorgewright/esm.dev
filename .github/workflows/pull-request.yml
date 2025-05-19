@@ -8,6 +8,23 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
+    services:
+      esm:
+        image: ghcr.io/esm-dev/esm.sh:latest
+        env:
+          NPM_TOKEN: fake
+          NPM_REGISTRY: http://npm:4873
+          LOG_LEVEL: debug
+        ports:
+          - '8080:8080'
+        volumes:
+          - esmd:/esmd
+
+      npm:
+        image: verdaccio/verdaccio:latest
+        ports:
+          - '4873:4873'
+
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -20,11 +37,6 @@ jobs:
 
       - name: Test Compilation
         run: bunx tsc
-
-      - uses: hoverkraft-tech/compose-action@v2.0.1
-        with:
-          up-flags: --build
-          down-flags: --volumes
 
       - name: Test
         run: bun test

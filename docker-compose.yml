@@ -1,30 +1,29 @@
 services:
-  esm.dev:
-    build:
-      context: .
-    depends_on: [esm, npm]
-    environment:
-      - NPM_REGISTRY=http://npm:4873
-      - ESM_ORIGIN=http://esm:8080
-      - ESM_STORAGE_PATH=/esmd
-      - PORT=3000
-    command:
-      - start
-      - --legacy-method
-      - /watch/*
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./docker-storage/esm/esmd:/esmd
-      - ./test/packages:/watch:ro
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./src
-          target: /app/src
-        - action: rebuild
-          path: ./package.json
-          target: /app/package.json
+  # esm.dev:
+  #   build:
+  #     context: .
+  #   depends_on: [esm, npm]
+  #   environment:
+  #     - NPM_REGISTRY=http://npm:4873
+  #     - ESM_ORIGIN=http://esm:8080
+  #     - ESM_STORAGE_PATH=/esmd
+  #     - PORT=3000
+  #   command:
+  #     - start
+  #     - /watch/*
+  #   ports:
+  #     - '3000:3000'
+  #   volumes:
+  #     - ./docker-storage/esm/esmd:/esmd
+  #     - ./test/packages:/watch:ro
+  #   develop:
+  #     watch:
+  #       - action: sync+restart
+  #         path: ./src
+  #         target: /app/src
+  #       - action: rebuild
+  #         path: ./package.json
+  #         target: /app/package.json
   esm:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:

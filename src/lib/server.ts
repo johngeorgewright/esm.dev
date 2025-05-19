@@ -9,7 +9,9 @@ export function serve(port: number, esmOrigin: string) {
     queue(
       () =>
         new Promise<void>((resolve, reject) => {
+          console.info('Proxying', req.url)
           res.on('error', reject)
+          res.on('close', resolve)
           res.on('finish', resolve)
           proxy.web(req, res, { target: esmOrigin })
         }),
@@ -22,4 +24,6 @@ export function serve(port: number, esmOrigin: string) {
   }).listen(port, () => {
     console.info('ESM proxy server listining on', server.address())
   })
+
+  return server
 }
