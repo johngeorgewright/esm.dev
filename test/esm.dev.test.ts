@@ -29,10 +29,12 @@ beforeAll(async () => {
     await watch('test/packages/package-1', {
       registry,
       esmStoragePath,
+      legacyMethod: true,
     }),
     await watch('test/packages/package-2', {
       registry,
       esmStoragePath,
+      legacyMethod: true,
     }),
   )
 })
