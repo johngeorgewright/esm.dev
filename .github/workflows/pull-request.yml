@@ -18,7 +18,7 @@ jobs:
         ports:
           - '8080:8080'
         volumes:
-          - ${{ github.workspace }}/esmd:/esmd
+          - ${{ github.workspace }}/esmd:/esmd:z
 
       npm:
         image: verdaccio/verdaccio:latest
