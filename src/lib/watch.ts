@@ -1,4 +1,4 @@
-import { watch as fsWatch, watchFile } from 'node:fs'
+import { watch as fsWatch, watchFile, type StatsListener } from 'node:fs'
 import { republish } from './republish.ts'
 import { getPackageMeta } from './getPackageMeta.ts'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -25,18 +25,25 @@ export async function watch(
 
   const republishPackage = () =>
     republish(packagePath, opts).catch(console.error)
-  const debounceRepublish = queuedDebounce(republishPackage, 1_000)
+
+  const debounceRepublish = queuedDebounce((filename: string = '') => {
+    console.info(`Change detected at ${packagePath}/${filename}`)
+    return republishPackage()
+  }, 1_000)
+
   await queue(republishPackage)
 
   if (opts.legacyMethod) {
-    return await legacyWatch(packagePath, debounceRepublish)
+    return await legacyWatch(packagePath, () => debounceRepublish())
   } else {
-    const watcher = fsWatch(packageRoot, { recursive: true }, debounceRepublish)
+    const watcher = fsWatch(packageRoot, { recursive: true }, (_, filename) =>
+      debounceRepublish(filename ?? ''),
+    )
     return () => watcher.close()
   }
 }
 
-async function legacyWatch(dirname: string, cb: () => any) {
+async function legacyWatch(dirname: string, cb: StatsListener) {
   const filename = await hashDirectory(dirname)
   const watcher = watchFile(filename, cb)
   let timer: NodeJS.Timeout | undefined
