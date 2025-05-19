@@ -3,6 +3,10 @@ name: Pull Request
 on:
   pull_request:
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.ref }}
+
 jobs:
   test:
     name: Test
@@ -18,7 +22,7 @@ jobs:
         ports:
           - '8080:8080'
         volumes:
-          - ${{ github.workspace }}/esmd:/esmd:z
+          - /home/runner/work/esm.dev/esmd:/esmd
 
       npm:
         image: verdaccio/verdaccio:latest
@@ -46,4 +50,4 @@ jobs:
       - name: Test
         run: bun test
         env:
-          ESM_STORAGE_PATH: ${{ github.workspace }}/esmd
+          ESM_STORAGE_PATH: /home/runner/work/esm.dev/esmd
