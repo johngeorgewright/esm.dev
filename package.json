@@ -1,5 +1,5 @@
 {
-  "name": "@johngeorgewright/esm.dev",
+  "name": "esm.dev",
   "version": "1.4.0",
   "description": "TypeScript library template",
   "type": "module",
