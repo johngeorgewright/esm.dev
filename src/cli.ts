@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { runExit } from 'clipanion'
 import { WatchCommand } from './commands/WatchCommand.js'
 import { RepublishCommand } from './commands/RepublishCommand.js'
