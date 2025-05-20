@@ -31,7 +31,7 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bunx build
+        run: bunx run build
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
