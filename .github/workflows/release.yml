@@ -13,6 +13,7 @@ jobs:
 
   release:
     name: Release
+    needs: [test]
     runs-on: ubuntu-latest
     outputs:
       new_release_published: ${{ steps.release.outputs.new_release_published }}
