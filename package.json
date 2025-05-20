@@ -11,6 +11,7 @@
     "esm.dev": "./dist/cli.js"
   },
   "scripts": {
+    "build": "bun run build",
     "esm.dev": "bun ./src/cli.ts",
     "prepare": "husky",
     "start": "docker compose up --detach --remove-orphans",
