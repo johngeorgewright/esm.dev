@@ -33,18 +33,20 @@ jobs:
       image: oven/bun:1
       env:
         ESM_ORIGIN: http://esm:8080
-        ESM_STORAGE_PATH: /home/runner/esmd
+        ESM_STORAGE_PATH: /esmd
         REGISTRY: http://npm:4873
+      volumes:
+        - /home/runner/esmd:/esmd
 
     steps:
       - name: debugging
-        run: ls -la /home/runner/esmd
+        run: ls -la /esmd
 
       - name: Checkout project
         uses: actions/checkout@v4
 
       - name: debugging
-        run: ls -la /home/runner/esmd
+        run: ls -la /esmd
 
       - name: Install
         run: bun install
