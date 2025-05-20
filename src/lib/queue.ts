@@ -1,7 +1,7 @@
 import debounce from 'lodash.debounce'
 import throat from 'throat'
 
-export const queue = throat(1)
+export const queue = throat.default(1)
 
 /**
  * Just like debounce, but the first call will add a promise to the queue
