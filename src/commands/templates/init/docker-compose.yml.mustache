@@ -2,11 +2,11 @@ services:
   esm.dev:
     image: ghcr.io/johngeorgewright/esm.dev:latest
     depends_on:
-      - esm.sh
+      - esm
       - npm
     environment:
-      - NPM_REGISTRY={{npmRegistryURL.origin}}
-      - ESM_ORIGIN={{esmURL.origin}}
+      - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
+      - ESM_ORIGIN=http://esm:{{esmURL.port}}
       - ESM_STORAGE_PATH=/esmd
       - PORT={{port}}
     command:
@@ -21,10 +21,10 @@ services:
       - {{path}}:/watch/{{basename}}:ro
       {{/packages}}
 
-  esm.sh:
-    image: ghcr.io/esm-dev/esm.sh:latest
+  esm:
+    image: ghcr.io/esm-dev/esm:latest
     environment:
-      - NPM_REGISTRY={{npmRegistryURL.origin}}
+      - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
       - NPM_TOKEN=fake
       - LOG_LEVEL=debug
     ports:

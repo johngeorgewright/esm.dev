@@ -11,9 +11,13 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
     description: 'Initialises your repo ready to work with ESM.sh locally',
   })
 
-  readonly esmOrigin = Option.String('-e,--esm-origin', 'http://esm:8080', {
-    description: 'The base URL of the ESM Server',
-  })
+  readonly esmOrigin = Option.String(
+    '-e,--esm-origin',
+    'http://localhost:8080',
+    {
+      description: 'The base URL of the ESM Server',
+    },
+  )
 
   readonly esmStoragePath = Option.String(
     '-s,--esm-storage-path',
@@ -31,7 +35,7 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
     description: 'The output directory',
   })
 
-  readonly registry = Option.String('-r,--registry', 'http://npm:4873', {
+  readonly registry = Option.String('-r,--registry', 'http://localhost:4873', {
     description: 'The URL of your local registry',
   })
 
