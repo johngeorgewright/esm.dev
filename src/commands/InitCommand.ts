@@ -44,7 +44,13 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
   packages!: { path: string; basename: string }[]
 
   override async execute() {
-    this.templateDir = path.join(import.meta.dirname, 'templates', 'init')
+    this.templateDir = path.resolve(
+      import.meta.dirname,
+      '..',
+      '..',
+      'templates',
+      'init',
+    )
     this.destinationDir = this.outputDirectory
     this.esmURL = new URL(this.esmOrigin)
     this.npmRegistryURL = new URL(this.registry)
