@@ -1,0 +1,38 @@
+services:
+  esm.dev:
+    image: ghcr.io/johngeorgewright/esm.dev:latest
+    depends_on:
+      - esm
+      - npm
+    environment:
+      - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
+      - ESM_ORIGIN=http://esm:{{esmURL.port}}
+      - ESM_STORAGE_PATH=/esmd
+      - PORT={{port}}
+    command:
+      - start
+      - /watch/*
+    ports:
+      - '{{port}}:{{port}}'
+    volumes:
+      - {{esmStoragePath}}:/esmd
+      # The following are paths to all the packages you wish to auto publish
+      {{#packages}}
+      - {{path}}:/watch/{{basename}}:ro
+      {{/packages}}
+
+  esm:
+    image: ghcr.io/esm-dev/esm:latest
+    environment:
+      - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
+      - NPM_TOKEN=fake
+      - LOG_LEVEL=debug
+    ports:
+      - '{{esmURL.port}}:8080'
+    volumes:
+      - {{esmStoragePath}}:/esmd
+
+  npm:
+    image: verdaccio/verdaccio:latest
+    ports:
+      - '{{npmRegistryURL.port}}:4873'

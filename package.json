@@ -2,11 +2,13 @@
   "name": "@johngeorgewright/esm.dev",
   "version": "1.4.0",
   "description": "TypeScript library template",
-  "private": true,
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": "./src/cli.ts"
+  },
+  "bin": {
+    "esm.dev": "./dist/cli.js"
   },
   "scripts": {
     "esm.dev": "bun ./src/cli.ts",
@@ -32,6 +34,7 @@
     "@types/bun": "latest",
     "@types/http-proxy": "^1.17.16",
     "@types/lodash.debounce": "^4.0.9",
+    "@types/mustache": "^4.2.6",
     "@types/ramda": "^0.30.2",
     "husky": "9.1.7",
     "lint-staged": "16.0.0",
@@ -47,10 +50,12 @@
   },
   "dependencies": {
     "clipanion": "^4.0.0-rc.4",
+    "clipanion-generator-command": "^1.2.0",
     "escape-string-regexp": "^5.0.0",
     "glob": "^11.0.2",
     "http-proxy": "^1.18.1",
     "lodash.debounce": "^4.0.8",
+    "mustache": "^4.2.0",
     "npm": "^11.3.0",
     "ramda": "^0.30.1",
     "throat": "^6.0.2",

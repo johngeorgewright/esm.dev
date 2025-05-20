@@ -5,7 +5,7 @@ export const queue = throat(1)
 
 /**
  * Just like debounce, but the first call will add a promise to the queue
- * and the rest will be queued until the debounced function is called.
+ * and that promise won't resolve until the debounced function is finally called.
  */
 export function queuedDebounce<Args extends unknown[], R>(
   fn: (...args: Args) => R,

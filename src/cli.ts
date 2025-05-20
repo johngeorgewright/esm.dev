@@ -5,8 +5,10 @@ import { LoginCommand } from './commands/LoginCommand.ts'
 import { TokenCommand } from './commands/TokenCommand.ts'
 import { WaitForRegistryCommand } from './commands/WaitForRegistryCommand.ts'
 import { StartCommand } from './commands/StartCommand.ts'
+import { InitCommand } from './commands/InitCommand.ts'
 
 runExit([
+  InitCommand,
   LoginCommand,
   TokenCommand,
   RepublishCommand,

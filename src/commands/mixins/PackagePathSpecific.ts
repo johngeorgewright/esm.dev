@@ -1,6 +1,5 @@
 import { Option } from 'clipanion'
 import type { CommandClass } from './CommandClass.ts'
-import { glob } from 'glob'
 
 export function PackagePathSpecific<T extends CommandClass>(Base: T) {
   abstract class PackagePathSpecific extends Base {
@@ -9,6 +8,7 @@ export function PackagePathSpecific<T extends CommandClass>(Base: T) {
     })
 
     protected async eachPackagePath(cb: (packagePath: string) => Promise<any>) {
+      const { glob } = await import('glob')
       const packagePaths = (
         await Promise.all(
           this.packagePaths.map((packagePath) => glob(packagePath)),
