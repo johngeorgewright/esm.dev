@@ -9,7 +9,7 @@ import { queue, queuedDebounce } from './queue.ts'
 export async function watch(
   packagePath: string,
   opts: { registry: string; esmStoragePath: string; legacyMethod?: boolean },
-) {
+): Promise<() => void> {
   const {
     name,
     packageRoot,
