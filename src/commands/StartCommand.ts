@@ -1,6 +1,6 @@
 import { serve } from '../lib/server.ts'
 import { ESMDevCommand } from './ESMDevCommand.ts'
-import { StringOptionWithEnv } from '../options/StringOptionWithEnv.ts'
+import { EnvOption } from '../options/EnvOption.ts'
 import { watch } from '../lib/watch.ts'
 import { Servable } from './mixins/Servable.ts'
 import { Watchable } from './mixins/Watchable.ts'
@@ -12,7 +12,7 @@ export class StartCommand extends Servable(Watchable(ESMDevCommand)) {
     description: 'Runs a server and concurrently watches a file system',
   })
 
-  readonly esmOrigin = StringOptionWithEnv('ESM_ORIGIN', '-e,--esm-origin', {
+  readonly esmOrigin = EnvOption('ESM_ORIGIN', '-e,--esm-origin', {
     description: 'The base URL of the ESM Server',
   })
 
