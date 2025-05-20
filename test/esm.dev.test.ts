@@ -10,10 +10,10 @@ import {
 import { readFile, watch as fsWatch, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
 import { compose } from 'ramda'
-import { serve } from '../src/lib/server.ts'
-import { watch } from '../src/lib/watch.ts'
-import { login } from '../src/lib/login.ts'
-import { until } from '../src/lib/until.ts'
+import { serve } from '../src/lib/server.js'
+import { watch } from '../src/lib/watch.js'
+import { login } from '../src/lib/login.js'
+import { until } from '../src/lib/until.js'
 
 const esmOrigin = process.env.ESM_ORIGIN ?? 'http://localhost:8080'
 const esmStoragePath = process.env.ESM_STORAGE_PATH ?? 'docker-storage/esm/esmd'
@@ -78,9 +78,9 @@ test('access to packages', async () => {
 })
 
 describe('changed content', async () => {
-  beforeEach(() => changeMainExport('./src/foos.ts'))
+  beforeEach(() => changeMainExport('./src/foos.js'))
 
-  afterEach(() => changeMainExport('./src/foo.ts'))
+  afterEach(() => changeMainExport('./src/foo.js'))
 
   test('is updated', async () => {
     const response1 = await fetch(

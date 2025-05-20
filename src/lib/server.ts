@@ -1,4 +1,4 @@
-import { queue } from './queue.ts'
+import { queue } from './queue.js'
 import { createServer } from 'node:http'
 import httpProxy from 'http-proxy'
 

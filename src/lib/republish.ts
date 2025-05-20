@@ -1,6 +1,6 @@
-import { getPackageMeta } from './getPackageMeta.ts'
-import { publish } from './publish.ts'
-import { unpublish } from './unpublish.ts'
+import { getPackageMeta } from './getPackageMeta.js'
+import { publish } from './publish.js'
+import { unpublish } from './unpublish.js'
 
 export async function republish(
   packagePath: string,

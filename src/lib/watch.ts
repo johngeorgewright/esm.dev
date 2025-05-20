@@ -1,10 +1,10 @@
 import { watch as fsWatch, watchFile, type StatsListener } from 'node:fs'
-import { republish } from './republish.ts'
-import { getPackageMeta } from './getPackageMeta.ts'
+import { republish } from './republish.js'
+import { getPackageMeta } from './getPackageMeta.js'
 import { readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { glob } from 'glob'
-import { queue, queuedDebounce } from './queue.ts'
+import { queue, queuedDebounce } from './queue.js'
 
 export async function watch(
   packagePath: string,

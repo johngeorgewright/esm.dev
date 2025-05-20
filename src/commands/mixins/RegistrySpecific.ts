@@ -1,5 +1,5 @@
-import type { CommandClass } from './CommandClass.ts'
-import { EnvOption } from '../../options/EnvOption.ts'
+import type { CommandClass } from './CommandClass.js'
+import { EnvOption } from '../../options/EnvOption.js'
 
 export function RegistrySpecific<TBase extends CommandClass>(Base: TBase) {
   abstract class RegistrySpecific extends Base {
