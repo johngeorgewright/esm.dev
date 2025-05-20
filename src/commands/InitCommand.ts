@@ -1,7 +1,7 @@
 import * as path from 'node:path'
-import { ESMDevCommand } from './ESMDevCommand'
-import { PackagePathSpecific } from './mixins/PackagePathSpecific'
-import { MustacheGeneratorCommand } from './MustacheGeneratorCommand'
+import { ESMDevCommand } from './ESMDevCommand.js'
+import { PackagePathSpecific } from './mixins/PackagePathSpecific.js'
+import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.js'
 import { Option } from 'clipanion'
 
 export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {

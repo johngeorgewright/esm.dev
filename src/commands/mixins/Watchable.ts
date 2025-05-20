@@ -1,5 +1,5 @@
 import { Option } from 'clipanion'
-import type { CommandClass } from './CommandClass'
+import type { CommandClass } from './CommandClass.js'
 
 export function Watchable<T extends CommandClass>(Base: T) {
   abstract class Watchable extends Base {

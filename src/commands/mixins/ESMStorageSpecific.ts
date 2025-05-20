@@ -1,4 +1,4 @@
-import type { CommandClass } from './CommandClass'
+import type { CommandClass } from './CommandClass.js'
 import { EnvOption } from '../../options/EnvOption.js'
 
 export function ESMStorageSpecific<T extends CommandClass>(Base: T) {
