@@ -19,6 +19,7 @@ jobs:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
           LOG_LEVEL: debug
+        options: --user root
         ports:
           - '8080:8080'
         volumes:
@@ -35,6 +36,7 @@ jobs:
         ESM_ORIGIN: http://esm:8080
         ESM_STORAGE_PATH: /esmd
         REGISTRY: http://npm:4873
+      options: --user root
       volumes:
         - ${{ github.workspace }}/esmd:/esmd
 
