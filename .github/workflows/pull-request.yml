@@ -22,7 +22,7 @@ jobs:
         ports:
           - '8080:8080'
         volumes:
-          - /home/runner/esmd:/esmd
+          - /github/home/esmd:/esmd
 
       npm:
         image: verdaccio/verdaccio:latest
@@ -36,7 +36,7 @@ jobs:
         ESM_STORAGE_PATH: /esmd
         REGISTRY: http://npm:4873
       volumes:
-        - /home/runner/esmd:/esmd
+        - /github/home/esmd:/esmd
 
     steps:
       - name: debugging
