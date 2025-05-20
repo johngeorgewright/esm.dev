@@ -20,7 +20,7 @@ jobs:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
           LOG_LEVEL: debug
-        options: --user root --name esm
+        options: --user root
         ports:
           - '8080:8080'
         volumes:
