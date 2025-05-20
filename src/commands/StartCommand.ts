@@ -1,6 +1,4 @@
-import { serve } from '../lib/server.ts'
 import { ESMDevCommand } from './ESMDevCommand.ts'
-import { watch } from '../lib/watch.ts'
 import { Servable } from './mixins/Servable.ts'
 import { Watchable } from './mixins/Watchable.ts'
 import { ESMServed } from './mixins/ESMServed.ts'
@@ -15,6 +13,8 @@ export class StartCommand extends Servable(
   })
 
   override async execute() {
+    const { watch } = await import('../lib/watch.ts')
+    const { serve } = await import('../lib/server.ts')
     serve(this.port, this.esmOrigin)
     await this.eachPackagePath((packagePath) => watch(packagePath, this))
   }

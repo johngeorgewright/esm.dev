@@ -1,5 +1,4 @@
 import { ESMDevCommand } from './ESMDevCommand.ts'
-import { republish } from '../lib/republish.ts'
 
 export class RepublishCommand extends ESMDevCommand {
   static override paths = [['republish']]
@@ -10,6 +9,7 @@ export class RepublishCommand extends ESMDevCommand {
   })
 
   override async execute() {
+    const { republish } = await import('../lib/republish.ts')
     await this.eachPackagePath((packagePath) => republish(packagePath, this))
   }
 }

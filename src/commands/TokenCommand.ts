@@ -1,5 +1,4 @@
 import { Command } from 'clipanion'
-import escapeStringRegexp from 'escape-string-regexp'
 import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 
 export class TokenCommand extends RegistrySpecific(Command) {
@@ -10,6 +9,7 @@ export class TokenCommand extends RegistrySpecific(Command) {
   })
 
   override async execute() {
+    const { default: escapeStringRegexp } = await import('escape-string-regexp')
     const npmrc = await Bun.file(`~/.npmrc`).text()
     const url = new URL(this.registry)
     const regex = new RegExp(

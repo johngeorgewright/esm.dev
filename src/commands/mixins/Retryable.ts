@@ -1,7 +1,6 @@
 import { Option } from 'clipanion'
 import { isNumber } from 'typanion'
 import type { CommandClass } from './CommandClass.ts'
-import { until } from '../../lib/until.ts'
 
 export function Retryable<T extends CommandClass>(Base: T) {
   abstract class Retryable extends Base {
@@ -16,6 +15,7 @@ export function Retryable<T extends CommandClass>(Base: T) {
     })
 
     protected async retry(endpoint: string) {
+      const { until } = await import('../../lib/until.ts')
       if (
         !(await until({
           ...this,
