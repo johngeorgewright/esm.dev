@@ -1,7 +1,8 @@
-name: Pull Request
+name: Test
 
 on:
   pull_request:
+  workflow_call:
 
 concurrency:
   cancel-in-progress: true
