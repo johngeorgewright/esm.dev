@@ -34,15 +34,12 @@ jobs:
       image: oven/bun:1
       env:
         ESM_ORIGIN: http://esm:8080
-        ESM_STORAGE_PATH: /esmd
         REGISTRY: http://npm:4873
       options: --user root
-      volumes:
-        - ${{ github.workspace }}/esmd:/esmd
 
     steps:
       - name: debugging
-        run: ls -la /esmd
+        run: ls -la ${GITHUB_WORKSPACE}/esmd
 
       - name: Checkout project
         uses: actions/checkout@v4
@@ -53,7 +50,7 @@ jobs:
           args: docker restart esm
 
       - name: debugging
-        run: ls -la /esmd
+        run: ls -la ${GITHUB_WORKSPACE}/esmd
 
       - name: Install
         run: bun install
@@ -63,3 +60,5 @@ jobs:
 
       - name: Test
         run: bun test
+        env:
+          ESM_STORAGE_PATH: ${GITHUB_WORKSPACE}/esmd
