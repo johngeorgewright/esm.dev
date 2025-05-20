@@ -19,7 +19,7 @@ jobs:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
           LOG_LEVEL: debug
-        options: --user root
+        options: --user root --name esm
         ports:
           - '8080:8080'
         volumes:
@@ -46,6 +46,11 @@ jobs:
 
       - name: Checkout project
         uses: actions/checkout@v4
+
+      - name: Restart ESM
+        uses: docker://docker
+        with:
+          args: docker restart esm
 
       - name: debugging
         run: ls -la /esmd
