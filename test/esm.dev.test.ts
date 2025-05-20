@@ -78,9 +78,9 @@ test('access to packages', async () => {
 })
 
 describe('changed content', async () => {
-  beforeEach(() => changeMainExport('./src/foos.js'))
+  beforeEach(() => changeMainExport('./src/foos.ts'))
 
-  afterEach(() => changeMainExport('./src/foo.js'))
+  afterEach(() => changeMainExport('./src/foo.ts'))
 
   test('is updated', async () => {
     const response1 = await fetch(
