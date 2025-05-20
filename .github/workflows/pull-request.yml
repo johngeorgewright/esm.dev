@@ -3,20 +3,52 @@ name: Pull Request
 on:
   pull_request:
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.ref }}
+
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
 
+    services:
+      esm:
+        image: ghcr.io/esm-dev/esm.sh:latest
+        env:
+          NPM_TOKEN: fake
+          NPM_REGISTRY: http://npm:4873
+          LOG_LEVEL: debug
+        options: --user root --name esm
+        ports:
+          - '8080:8080'
+        volumes:
+          - /home/runner/docker-storage/esmd:/esmd
+
+      npm:
+        image: verdaccio/verdaccio:latest
+        ports:
+          - '4873:4873'
+
+    container:
+      image: oven/bun:1
+      env:
+        ESM_ORIGIN: http://esm:8080
+        ESM_STORAGE_PATH: /esmd
+        REGISTRY: http://npm:4873
+      options: --user root
+      volumes:
+        - /home/runner/docker-storage/esmd:/esmd
+
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Use Bun
-        uses: oven-sh/setup-bun@v2
-
       - name: Install
         run: bun install
 
+      - name: Test Compilation
+        run: bunx tsc
+
       - name: Test
-        run: bun run test
+        run: bun test

@@ -1,24 +1,5 @@
 services:
-  esm.dev:
-    build:
-      context: .
-    depends_on: [esm.sh, npm]
-    environment:
-      - NPM_REGISTRY=http://npm:4873
-      - ESM_ORIGIN=http://esm.sh:8080
-      - ESM_STORAGE_PATH=/esmd
-      - PORT=3000
-    command:
-      - start
-      - /watch/*
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./docker-storage/esm/esmd:/esmd
-      # The following are paths to all the packages you wish to auto publish
-      - ../dmg-composition-pipeline/packages/article:/watch/article:ro
-      - ../dmg-composition-pipeline/packages/compipe-api:/watch/compipe-api:ro
-  esm.sh:
+  esm:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:
       - NPM_TOKEN=fake

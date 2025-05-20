@@ -1,9 +1,9 @@
 import type { CommandClass } from './CommandClass'
-import { StringOptionWithEnv } from '../../options/StringOptionWithEnv.ts'
+import { EnvOption } from '../../options/EnvOption.ts'
 
 export function ESMStorageSpecific<T extends CommandClass>(Base: T) {
   abstract class ESMStorageSpecific extends Base {
-    readonly esmStoragePath = StringOptionWithEnv(
+    readonly esmStoragePath = EnvOption(
       'ESM_STORAGE_PATH',
       '-s,--esm-storage-path',
       {

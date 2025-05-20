@@ -8,15 +8,13 @@ export function PackagePathSpecific<T extends CommandClass>(Base: T) {
       name: 'packages',
     })
 
-    protected async eachPackagePath(
-      cb: (packagePath: string) => Promise<void>,
-    ) {
+    protected async eachPackagePath(cb: (packagePath: string) => Promise<any>) {
       const packagePaths = (
         await Promise.all(
           this.packagePaths.map((packagePath) => glob(packagePath)),
         )
       ).flat()
-      for (const packagePath of packagePaths) await cb(packagePath)
+      await Promise.all(packagePaths.map(cb))
     }
   }
 
