@@ -41,19 +41,8 @@ jobs:
         - /home/runner/docker-storage/esmd:/esmd
 
     steps:
-      - name: debugging
-        run: ls -la /esmd
-
       - name: Checkout project
         uses: actions/checkout@v4
-
-      # - name: Restart ESM
-      #   uses: docker://docker
-      #   with:
-      #     args: docker restart esm
-
-      - name: debugging
-        run: ls -la /esmd
 
       - name: Install
         run: bun install
@@ -63,5 +52,3 @@ jobs:
 
       - name: Test
         run: bun test
-        env:
-          ESM_STORAGE_PATH: /esmd
