@@ -6,48 +6,23 @@ It expects you to have a local version of ESM.sh and verdaccio running. It will 
 
 ## Usage
 
-The simplest solution is to use docker-compose. Using the configuration below:
+### Prerequists
 
-`docker compose up`
+- You have [docker](https://www.docker.com/) installed
+- You have [docker compose](https://docs.docker.com/compose/) installed
+- You have a JavaScript runtime installed ([Node.js](https://nodejs.org/), [Deno](https://deno.com/), [Bun](https://bun.sh/) etc)
 
-```yaml
-services:
-  esm.dev:
-    image: ghcr.io/johngeorgewright/esm.dev:latest
-    depends_on:
-      - esm.sh
-      - npm
-    environment:
-      - NPM_REGISTRY=http://npm:4873
-      - ESM_ORIGIN=http://esm.sh:8080
-      - ESM_STORAGE_PATH=/esmd
-      - PORT=3000
-    command:
-      - start
-      - /watch/*
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./docker-storage/esm/esmd:/esmd
-      # The following are paths to all the packages you wish to auto publish
-      - ./packages/package-1:/watch/package-1:ro
-      - ./packages/package-2:/watch/package-2:ro
+### Installation
 
-  esm.sh:
-    image: ghcr.io/esm-dev/esm.sh:latest
-    environment:
-      - NPM_REGISTRY=http://npm:4873
-      - NPM_TOKEN=fake
-      - LOG_LEVEL=debug
-    ports:
-      - '8080:8080'
-    volumes:
-      - ./docker-storage/esm/esmd:/esmd
+```bash
+# Node.js
+npx esm.dev init my-local-package-1 my-local-package-2 ...
+```
 
-  npm:
-    image: verdaccio/verdaccio:latest
-    ports:
-      - '4873:4873'
+This will create a docker-compose file in your cwd. Now run it:
+
+```bash
+docker compose up
 ```
 
 Once the above is running point your ESM modules to `localhost:3000`:
