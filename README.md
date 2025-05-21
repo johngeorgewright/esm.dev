@@ -6,7 +6,7 @@ It expects you to have a local version of ESM.sh and verdaccio running. It will 
 
 ## Usage
 
-### Prerequists
+### Prerequisites
 
 - You have [docker](https://www.docker.com/) installed
 - You have [docker compose](https://docs.docker.com/compose/) installed
