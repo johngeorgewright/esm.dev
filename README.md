@@ -6,7 +6,7 @@ It expects you to have a local version of ESM.sh and verdaccio running. It will 
 
 ## Usage
 
-### Prerequists
+### Prerequisites
 
 - You have [docker](https://www.docker.com/) installed
 - You have [docker compose](https://docs.docker.com/compose/) installed
@@ -16,7 +16,7 @@ It expects you to have a local version of ESM.sh and verdaccio running. It will 
 
 ```bash
 # Node.js
-npx esm.dev init my-local-package-1 my-local-package-2 ...
+npx esm.dev init ./packages/my-local-package-1 ./packages/my-local-package-2 ...
 ```
 
 This will create a docker-compose file in your cwd. Now run it:

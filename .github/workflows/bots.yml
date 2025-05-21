@@ -9,9 +9,9 @@ jobs:
     name: Auto Approve
     runs-on: ubuntu-latest
     if: github.actor == 'renovate[bot]' || github.actor == 'dependabot[bot]'
+    permissions:
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: hmarr/auto-approve-action@v2
+      - uses: hmarr/auto-approve-action@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          review-message: '@dependabot merge'

@@ -58,6 +58,10 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
       path: packagePath,
       basename: path.basename(packagePath),
     }))
+    await this.removeDestinationFile(
+      'docker-compose.yaml',
+      'docker-compose.yml.mustache',
+    )
     await super.execute()
   }
 }
