@@ -22,7 +22,7 @@ services:
       {{/packages}}
 
   esm:
-    image: ghcr.io/esm-dev/esm:latest
+    image: ghcr.io/esm-dev/esm.sh:latest
     environment:
       - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
       - NPM_TOKEN=fake
