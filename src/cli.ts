@@ -7,6 +7,7 @@ import { TokenCommand } from './commands/TokenCommand.js'
 import { WaitForRegistryCommand } from './commands/WaitForRegistryCommand.js'
 import { StartCommand } from './commands/StartCommand.js'
 import { InitCommand } from './commands/InitCommand.js'
+import { VersionCommand } from './commands/VersionCommand.js'
 
 runExit([
   InitCommand,
@@ -14,6 +15,7 @@ runExit([
   TokenCommand,
   RepublishCommand,
   StartCommand,
+  VersionCommand,
   WaitForRegistryCommand,
   WatchCommand,
 ])
