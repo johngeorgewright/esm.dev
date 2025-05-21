@@ -1,0 +1,29 @@
+name: Docker
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: The version to build and push
+        required: true
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version to build and push
+        required: true
+        type: string
+
+jobs:
+  push-image:
+    uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
+    permissions:
+      packages: write
+    with:
+      image-name: ghcr.io/johngeorgewright/esm.dev
+      image-tag: ${{ inputs.version }}
+      registry: ghcr.io
+    secrets:
+      DOCKER_REPO_USERNAME: ${{ github.actor }}
+      DOCKER_REPO_PASSWORD: ${{ secrets.GITHUB_TOKEN }}

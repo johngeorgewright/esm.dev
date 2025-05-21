@@ -46,13 +46,6 @@ jobs:
   push-image:
     needs: [release]
     if: needs.release.outputs.new_release_published == 'true'
-    uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
-    permissions:
-      packages: write
+    uses: ./.github/workflows/docker.yml
     with:
-      image-name: ghcr.io/johngeorgewright/esm.dev
-      image-tag: ${{ needs.release.outputs.version }}
-      registry: ghcr.io
-    secrets:
-      DOCKER_REPO_USERNAME: ${{ github.actor }}
-      DOCKER_REPO_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      version: ${{ needs.release.outputs.version }}
