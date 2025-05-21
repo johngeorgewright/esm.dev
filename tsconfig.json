@@ -6,7 +6,6 @@
     "module": "NodeNext",
     "moduleDetection": "force",
     "allowJs": true,
-    "resolveJsonModule": true,
 
     // Bundler mode
     "moduleResolution": "nodenext",

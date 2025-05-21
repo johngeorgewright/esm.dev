@@ -8,7 +8,10 @@ export class VersionCommand extends Command {
   })
 
   override async execute(): Promise<number | void> {
-    const { default: pckg } = await import('../../package.json')
+    const path = await import('node:path')
+    const pckg = await Bun.file(
+      path.resolve(import.meta.dirname, '..', '..', 'package.json'),
+    ).json()
     this.context.stdout.write(`${pckg.version}\n`)
   }
 }
