@@ -12,7 +12,10 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
     examples: [
       ['Create a minimal template', 'esm.dev init'],
       ["Specify the packages you're developing", 'esm.dev init packages/*'],
-      ['Specify different ports', 'esm.dev init --port 3001 --esm-origin'],
+      [
+        'Specify different ports',
+        'esm.dev init --port 3001 --esm-port 8081 --registry-port 4444',
+      ],
     ],
   })
 
