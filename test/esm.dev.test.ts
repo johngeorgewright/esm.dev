@@ -9,7 +9,7 @@ import {
 } from 'bun:test'
 import { readFile, watch as fsWatch, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { compose } from 'ramda'
+import { compose, T } from 'ramda'
 import { serve } from '../src/lib/server.js'
 import { watch } from '../src/lib/watch.js'
 import { login } from '../src/lib/login.js'
@@ -20,7 +20,7 @@ const esmStoragePath = process.env.ESM_STORAGE_PATH ?? 'docker-storage/esm/esmd'
 const port = Number(process.env.PORT ?? '3000')
 const registry = process.env.REGISTRY ?? 'http://localhost:4873'
 
-let server: ReturnType<typeof serve>
+let stopServing: () => void
 let stopWatching: () => void
 
 beforeAll(async () => {
@@ -38,22 +38,22 @@ beforeAll(async () => {
 
   await login(registry)
 
-  server = serve(port, esmOrigin)
+  stopServing = serve(port, esmOrigin)
 
   stopWatching = compose(
     await watch('test/packages/package-1', {
       registry,
       esmStoragePath,
-    }),
+    }).catch(() => T),
     await watch('test/packages/package-2', {
       registry,
       esmStoragePath,
-    }),
+    }).catch(() => T),
   )
 })
 
 afterAll(() => {
-  server.close()
+  stopServing()
   stopWatching()
 })
 

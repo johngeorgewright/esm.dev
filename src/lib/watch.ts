@@ -23,23 +23,39 @@ export async function watch(
 
   console.info('Watching', packagePath)
 
+  const abortController = new AbortController()
+  const signal = abortController.signal
+
   const republishPackage = () =>
     republish(packagePath, opts).catch(console.error)
 
-  const debounceRepublish = queuedDebounce((filename: string = '') => {
-    console.info(`Change detected at ${packagePath}/${filename}`)
-    return republishPackage()
-  }, 1_000)
+  const debounceRepublish = queuedDebounce(
+    (filename: string = '') => {
+      console.info(`Change detected at ${packagePath}/${filename}`)
+      return republishPackage()
+    },
+    1_000,
+    signal,
+  )
 
-  await queue(republishPackage)
+  await queue(signal, republishPackage)
 
   if (opts.legacyMethod) {
-    return await legacyWatch(packagePath, () => debounceRepublish())
+    const close = await legacyWatch(packagePath, () => debounceRepublish())
+    return () => {
+      console.info('stop watching')
+      close()
+      abortController.abort()
+    }
   } else {
     const watcher = fsWatch(packageRoot, { recursive: true }, (_, filename) =>
       debounceRepublish(filename ?? ''),
     )
-    return () => watcher.close()
+    return () => {
+      console.info('stop watching')
+      watcher.close()
+      abortController.abort()
+    }
   }
 }
 
