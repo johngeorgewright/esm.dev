@@ -5,8 +5,8 @@ services:
       - esm
       - npm
     environment:
-      - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
-      - ESM_ORIGIN=http://esm:{{esmURL.port}}
+      - NPM_REGISTRY=http://npm:{{registryPort}}
+      - ESM_ORIGIN=http://esm:{{esmPort}}
       - ESM_STORAGE_PATH=/esmd
       - PORT={{port}}
     command:
@@ -20,19 +20,23 @@ services:
       {{#packages}}
       - {{path}}:/watch/{{basename}}:ro
       {{/packages}}
+      {{^packages}}
+      # EG:
+      # - ./packages/*:/watch:ro
+      {{/packages}}
 
   esm:
     image: ghcr.io/esm-dev/esm.sh:latest
     environment:
-      - NPM_REGISTRY=http://npm:{{npmRegistryURL.port}}
+      - NPM_REGISTRY=http://npm:{{registryPort}}
       - NPM_TOKEN=fake
       - LOG_LEVEL=debug
     ports:
-      - '{{esmURL.port}}:8080'
+      - '{{esmPort}}:8080'
     volumes:
       - {{esmStoragePath}}:/esmd
 
   npm:
     image: verdaccio/verdaccio:latest
     ports:
-      - '{{npmRegistryURL.port}}:4873'
+      - '{{registryPort}}:4873'

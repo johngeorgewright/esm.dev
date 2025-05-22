@@ -2,21 +2,24 @@ import { ESMDevCommand } from './ESMDevCommand.js'
 import { PackagePathSpecific } from './mixins/PackagePathSpecific.js'
 import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.js'
 import { Option } from 'clipanion'
+import { isNumber } from 'typanion'
 
 export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
   static override paths = [['init']]
 
   static override usage = ESMDevCommand.Usage({
     description: 'Initialises your repo ready to work with ESM.sh locally',
+    examples: [
+      ['Create a minimal template', 'esm.dev init'],
+      ["Specify the packages you're developing", 'esm.dev init packages/*'],
+      ['Specify different ports', 'esm.dev init --port 3001 --esm-origin'],
+    ],
   })
 
-  readonly esmOrigin = Option.String(
-    '-e,--esm-origin',
-    'http://localhost:8080',
-    {
-      description: 'The base URL of the ESM Server',
-    },
-  )
+  readonly esmPort = Option.String('-e,--esm-port', '8080', {
+    description: 'The port of the ESM Server',
+    validator: isNumber(),
+  })
 
   readonly esmStoragePath = Option.String(
     '-s,--esm-storage-path',
@@ -34,8 +37,9 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
     description: 'The output directory',
   })
 
-  readonly registry = Option.String('-r,--registry', 'http://localhost:4873', {
-    description: 'The URL of your local registry',
+  readonly registryPort = Option.String('-r,--registry-port', '4873', {
+    description: 'The port of your local registry',
+    validator: isNumber(),
   })
 
   esmURL!: URL
@@ -52,8 +56,6 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
       'init',
     )
     this.destinationDir = this.outputDirectory
-    this.esmURL = new URL(this.esmOrigin)
-    this.npmRegistryURL = new URL(this.registry)
     this.packages = this.packagePaths.map((packagePath) => ({
       path: packagePath,
       basename: path.basename(packagePath),
