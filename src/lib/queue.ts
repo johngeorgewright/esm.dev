@@ -40,8 +40,7 @@ export function queuedDebounce<Args extends unknown[], R>(
   }, delay)
 
   return (...args: Args) => {
-    start()
-    const { promise } = promiseWithResolvers!
+    const { promise } = start()
     debounced(...args)
     return promise
   }
@@ -51,5 +50,6 @@ export function queuedDebounce<Args extends unknown[], R>(
       promiseWithResolvers = Promise.withResolvers<R>()
       queue(signal, async () => promiseWithResolvers?.promise)
     }
+    return promiseWithResolvers
   }
 }
