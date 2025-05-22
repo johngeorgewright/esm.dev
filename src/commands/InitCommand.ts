@@ -1,4 +1,3 @@
-import * as path from 'node:path'
 import { ESMDevCommand } from './ESMDevCommand.js'
 import { PackagePathSpecific } from './mixins/PackagePathSpecific.js'
 import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.js'
@@ -44,6 +43,7 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
   packages!: { path: string; basename: string }[]
 
   override async execute() {
+    const path = await import('node:path')
     this.templateDir = path.resolve(
       import.meta.dirname,
       '..',
