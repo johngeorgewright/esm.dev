@@ -52,4 +52,4 @@ jobs:
         run: bunx tsc
 
       - name: Test
-        run: bun test
+        run: bun run test

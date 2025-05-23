@@ -5,6 +5,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { glob } from 'glob'
 import { queue, queuedDebounce } from './queue.js'
+import { getWatchIgnorer, type Ignorer } from './watchIgnoreList.js'
 
 export async function watch(
   packagePath: string,
@@ -48,8 +49,13 @@ export async function watch(
       abortController.abort()
     }
   } else {
-    const watcher = fsWatch(packageRoot, { recursive: true }, (_, filename) =>
-      debounceRepublish(filename ?? ''),
+    const ignorer = await getWatchIgnorer(packagePath)
+    const watcher = fsWatch(
+      packageRoot,
+      { recursive: true },
+      (_, filename) =>
+        (filename && ignorer.ignores(filename)) ||
+        debounceRepublish(filename ?? ''),
     )
     return () => {
       console.info('stop watching')
@@ -60,7 +66,8 @@ export async function watch(
 }
 
 async function legacyWatch(dirname: string, cb: StatsListener) {
-  const filename = await hashDirectory(dirname)
+  const ignorer = await getWatchIgnorer(dirname)
+  const filename = await hashDirectory(dirname, ignorer)
   const watcher = watchFile(filename, cb)
   let timer: NodeJS.Timeout | undefined
   beginTimer()
@@ -70,15 +77,18 @@ async function legacyWatch(dirname: string, cb: StatsListener) {
   }
   function beginTimer() {
     timer = setTimeout(
-      () => hashDirectory(dirname).catch(console.error).finally(beginTimer),
+      () =>
+        hashDirectory(dirname, ignorer)
+          .catch(console.error)
+          .finally(beginTimer),
       1_000,
     )
   }
 }
 
-async function hashDirectory(dirname: string) {
+async function hashDirectory(dirname: string, ignorer: Ignorer) {
   const filename = `/tmp/${dirname.replace(/\//g, '-')}.hash.txt`
-  const files = await glob(`${dirname}/**/*`, { nodir: true })
+  const files = ignorer.filter(await glob(`${dirname}/**/*`, { nodir: true }))
   const hashes = await Promise.all(
     files.map(async (file) => {
       const contents = await readFile(file, 'utf-8')
