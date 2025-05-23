@@ -1,4 +1,4 @@
-import { $ } from 'bun'
+import { $, ProcessOutput } from 'zx'
 import { glob } from 'glob'
 import { rm } from 'node:fs/promises'
 
@@ -22,10 +22,8 @@ async function unpublishPackage(registry: string, name: string) {
     await $`bunx npm unpublish --registry ${registry} --force ${name}`
   } catch (error) {
     if (
-      !(
-        error instanceof $.ShellError &&
-        error.stderr.includes('npm error code E404')
-      )
+      error instanceof ProcessOutput &&
+      !error.stderr.includes('npm error code E404')
     )
       throw error
   }

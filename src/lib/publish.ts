@@ -1,4 +1,4 @@
-import { $ } from 'bun'
+import { $ } from 'zx'
 import * as path from 'node:path'
 
 export async function publish({
@@ -8,7 +8,7 @@ export async function publish({
   packageRoot: string
   registry: string
 }) {
-  await $`bunx npm publish --registry ${registry}`.cwd(
-    path.resolve(packageRoot),
-  )
+  await $({
+    cwd: path.resolve(packageRoot),
+  })`bunx npm publish --registry ${registry}`
 }
