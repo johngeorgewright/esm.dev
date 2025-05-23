@@ -16,7 +16,8 @@
     "esm.dev": "bun ./src/cli.ts",
     "prepare": "husky",
     "start": "docker compose up --detach --remove-orphans",
-    "stop": "docker compose down"
+    "stop": "docker compose down",
+    "test": "find . -name \"*.test.ts\" -exec sh -c 'bun test \"$1\" || kill \"$PPID\"' sh {} \\;"
   },
   "repository": {
     "type": "git",
@@ -56,7 +57,9 @@
     "escape-string-regexp": "^5.0.0",
     "glob": "^11.0.2",
     "http-proxy": "^1.18.1",
+    "ignore": "^7.0.4",
     "lodash.debounce": "^4.0.8",
+    "minimatch": "^10.0.1",
     "mustache": "^4.2.0",
     "npm": "^11.4.1",
     "ramda": "^0.30.1",
