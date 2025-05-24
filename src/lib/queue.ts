@@ -5,6 +5,7 @@ export async function queue<TResult, TArgs extends any[] = []>(
   signal: AbortSignal,
   fn: (...args: TArgs) => Promise<TResult>,
 ): Promise<TResult> {
+  signal.throwIfAborted()
   return _queue((...args) => {
     signal.throwIfAborted()
     return fn(...(args as any))
@@ -21,7 +22,7 @@ export function queuedDebounce<Args extends unknown[], R>(
   fn: (...args: Args) => R,
   delay: number,
   signal: AbortSignal,
-): (...args: Args) => Promise<R> {
+): (...args: Args) => Promise<Awaited<R>> {
   let promiseWithResolvers: PromiseWithResolvers<R> | undefined
 
   signal.addEventListener('abort', (reason) =>
@@ -42,7 +43,7 @@ export function queuedDebounce<Args extends unknown[], R>(
   return (...args: Args) => {
     const { promise } = start()
     debounced(...args)
-    return promise
+    return promise as Promise<Awaited<R>>
   }
 
   function start() {

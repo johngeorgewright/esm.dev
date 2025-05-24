@@ -30,12 +30,11 @@ async function unpublishPackage(registry: string, name: string) {
 }
 
 async function deleteESMCache(esmStoragePath: string, name: string) {
-  await glob(`${esmStoragePath}/**/${name}@*`).then((paths) =>
-    Promise.all(
-      paths.map((path) => {
-        console.info('Deleting', path)
-        return rm(path, { recursive: true })
-      }),
-    ),
+  const paths = await glob(`${esmStoragePath}/**/${name}@*`)
+  await Promise.all(
+    paths.map((path) => {
+      console.info('Deleting', path)
+      return rm(path, { recursive: true })
+    }),
   )
 }

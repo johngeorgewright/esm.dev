@@ -1,4 +1,4 @@
-import { watch as fsWatch, watchFile, type StatsListener } from 'node:fs'
+import { watch as fsWatch, watchFile } from 'node:fs'
 import { republish } from './republish.js'
 import { getPackageMeta } from './getPackageMeta.js'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -22,18 +22,18 @@ export async function watch(
     return () => {}
   }
 
-  console.info('Watching', packagePath)
+  console.info('Watching', packageRoot)
 
   const abortController = new AbortController()
   const signal = abortController.signal
 
   const republishPackage = () =>
-    republish(packagePath, opts).catch(console.error)
+    republish(packageRoot, opts).catch(console.error)
 
   const debounceRepublish = queuedDebounce(
-    (filename: string = '') => {
-      console.info(`Change detected at ${packagePath}/${filename}`)
-      return republishPackage()
+    async (filename: string = '') => {
+      console.info(`Change detected at ${packageRoot}/${filename}`)
+      await republishPackage()
     },
     1_000,
     signal,
@@ -41,39 +41,46 @@ export async function watch(
 
   await queue(signal, republishPackage)
 
-  if (opts.legacyMethod) {
-    const close = await legacyWatch(packagePath, () => debounceRepublish())
-    return () => {
-      console.info('stop watching')
-      close()
-      abortController.abort()
-    }
-  } else {
-    const ignorer = await getWatchIgnorer(packagePath)
-    const watcher = fsWatch(
-      packageRoot,
-      { recursive: true },
-      (_, filename) =>
-        (filename && ignorer.ignores(filename)) ||
-        debounceRepublish(filename ?? ''),
-    )
-    return () => {
-      console.info('stop watching')
-      watcher.close()
-      abortController.abort()
-    }
+  return opts.legacyMethod
+    ? legacyWatch(abortController, packageRoot, debounceRepublish)
+    : modernWatch(abortController, packageRoot, debounceRepublish)
+}
+
+async function modernWatch(
+  abortController: AbortController,
+  dirname: string,
+  debounceRepublish: (filename?: string | undefined) => Promise<void>,
+) {
+  const ignorer = await getWatchIgnorer(dirname)
+  const watcher = fsWatch(
+    dirname,
+    { recursive: true },
+    (_, filename) =>
+      (filename && ignorer.ignores(filename)) ||
+      debounceRepublish(filename ?? ''),
+  )
+  return () => {
+    console.info('Stop watching')
+    watcher.close()
+    abortController.abort()
   }
 }
 
-async function legacyWatch(dirname: string, cb: StatsListener) {
+async function legacyWatch(
+  abortController: AbortController,
+  dirname: string,
+  debounceRepublish: (filename?: string | undefined) => Promise<void>,
+) {
   const ignorer = await getWatchIgnorer(dirname)
   const filename = await hashDirectory(dirname, ignorer)
-  const watcher = watchFile(filename, cb)
+  const watcher = watchFile(filename, () => debounceRepublish())
   let timer: NodeJS.Timeout | undefined
   beginTimer()
   return () => {
+    console.info('Stop watching')
     watcher.unref()
     clearTimeout(timer)
+    abortController.abort()
   }
   function beginTimer() {
     timer = setTimeout(
