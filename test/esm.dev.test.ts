@@ -6,8 +6,8 @@ import {
   describe,
   expect,
   test,
-} from 'bun:test'
-import { readFile, watch as fsWatch, writeFile } from 'node:fs/promises'
+} from 'vitest'
+import { readFile, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
 import { compose, T } from 'ramda'
 import { serve } from '../src/lib/server.js'
@@ -72,32 +72,53 @@ test('access to packages', async () => {
 
   expect(await response2.text()).toMatchInlineSnapshot(`
     "/* esm.sh - @esm.dev/package-2@0.0.1 */
-    export * from "/@esm.dev/package-2@0.0.1/node/package-2.mjs";
+    export * from "/@esm.dev/package-2@0.0.1/es2022/package-2.mjs";
     "
   `)
 })
 
-describe('changed content', async () => {
-  beforeEach(() => changeMainExport('./src/foos.ts'))
+testWatcher(100)
 
-  afterEach(() => changeMainExport('./src/foo.ts'))
-
-  test('is updated', async () => {
-    const response1 = await fetch(
-      `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+describe('legacy watch', () => {
+  beforeAll(async () => {
+    stopWatching()
+    console.info('SETTING UP LEGACY WATCH')
+    stopWatching = compose(
+      await watch('test/packages/package-1', {
+        registry,
+        esmStoragePath,
+        legacyMethod: true,
+      }).catch(() => T),
+      await watch('test/packages/package-2', {
+        registry,
+        esmStoragePath,
+        legacyMethod: true,
+      }).catch(() => T),
     )
-    expect(await response1.text()).toMatchInlineSnapshot(`
-      "/* esm.sh - @esm.dev/package-1@0.0.1 */
-      function o(){return"foos"}export{o as foos};
-      //# sourceMappingURL=package-1.mjs.map"
-    `)
   })
 
-  async function changeMainExport(to: string) {
-    const filename = 'test/packages/package-1/package.json'
-    const json = JSON.parse(await readFile(filename, 'utf-8'))
-    json.exports['.'] = to
-    await writeFile(filename, JSON.stringify(json, null, 2))
-    await setTimeout(100)
-  }
+  testWatcher(3_000)
 })
+
+function testWatcher(interval: number) {
+  describe('changed content', async () => {
+    beforeEach(() => changeMainExport('./src/foos.ts'))
+
+    afterEach(() => changeMainExport('./src/foo.ts'))
+
+    test('is updated', { timeout: interval + 5_000 }, async () => {
+      const response1 = await fetch(
+        `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+      )
+      expect(await response1.text()).toMatchSnapshot()
+    })
+
+    async function changeMainExport(to: string) {
+      const filename = 'test/packages/package-1/package.json'
+      const json = JSON.parse(await readFile(filename, 'utf-8'))
+      json.exports['.'] = to
+      await writeFile(filename, JSON.stringify(json, null, 2))
+      await setTimeout(interval)
+    }
+  })
+}

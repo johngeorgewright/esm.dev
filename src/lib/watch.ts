@@ -1,4 +1,4 @@
-import { watch as fsWatch, watchFile } from 'node:fs'
+import { watch as fsWatch } from 'node:fs'
 import { republish } from './republish.js'
 import { getPackageMeta } from './getPackageMeta.js'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto'
 import { glob } from 'glob'
 import { queue, queuedDebounce } from './queue.js'
 import { getWatchIgnorer, type Ignorer } from './watchIgnoreList.js'
+import { tempfile } from 'zx'
 
 export async function watch(
   packagePath: string,
@@ -25,67 +26,75 @@ export async function watch(
   console.info('Watching', packageRoot)
 
   const abortController = new AbortController()
-  const signal = abortController.signal
+  const { signal } = abortController
 
-  const republishPackage = () =>
-    republish(packageRoot, opts).catch(console.error)
+  const republishPackage = (filename: string = '') => {
+    console.info(`Change detected at ${packageRoot}/${filename}`)
+    return republish(packageRoot, opts).catch(console.error)
+  }
 
-  const debounceRepublish = queuedDebounce(
-    async (filename: string = '') => {
-      console.info(`Change detected at ${packageRoot}/${filename}`)
-      await republishPackage()
-    },
-    1_000,
-    signal,
-  )
-
-  await queue(signal, republishPackage)
+  try {
+    await queue(republishPackage, signal)
+  } catch (error: any) {
+    if (error.name === 'AbortError') return () => {}
+    else throw error
+  }
 
   return opts.legacyMethod
-    ? legacyWatch(abortController, packageRoot, debounceRepublish)
-    : modernWatch(abortController, packageRoot, debounceRepublish)
+    ? legacyWatch(abortController, packageRoot, republishPackage)
+    : modernWatch(
+        abortController,
+        packageRoot,
+        queuedDebounce(republishPackage, 1_000, signal),
+      )
 }
 
 async function modernWatch(
   abortController: AbortController,
   dirname: string,
-  debounceRepublish: (filename?: string | undefined) => Promise<void>,
+  republish: (filename?: string | undefined) => Promise<void>,
 ) {
+  abortController.signal.addEventListener('abort', () => {
+    console.info('Stop watching', dirname)
+    watcher.close()
+  })
+
   const ignorer = await getWatchIgnorer(dirname)
   const watcher = fsWatch(
     dirname,
-    { recursive: true },
+    { recursive: true /*, signal: abortController.signal */ },
     (_, filename) =>
       (filename && ignorer.ignores(filename)) ||
-      debounceRepublish(filename ?? ''),
+      republish(filename ?? '').catch((error) => {
+        if (error.name !== 'AbortError') throw error
+      }),
   )
-  return () => {
-    console.info('Stop watching')
-    watcher.close()
-    abortController.abort()
-  }
+
+  return () => abortController.abort()
 }
 
 async function legacyWatch(
   abortController: AbortController,
   dirname: string,
-  debounceRepublish: (filename?: string | undefined) => Promise<void>,
+  republish: (filename?: string | undefined) => Promise<void>,
 ) {
   const ignorer = await getWatchIgnorer(dirname)
-  const filename = await hashDirectory(dirname, ignorer)
-  const watcher = watchFile(filename, () => debounceRepublish())
+  const filename = tempfile()
+  await hashDirectory(dirname, ignorer, filename, () => {})
+
+  abortController.signal.addEventListener('abort', () => {
+    console.info('Stop (legacy) watching', dirname)
+    clearTimeout(timer)
+  })
+
   let timer: NodeJS.Timeout | undefined
   beginTimer()
-  return () => {
-    console.info('Stop watching')
-    watcher.unref()
-    clearTimeout(timer)
-    abortController.abort()
-  }
+  return () => abortController.abort()
+
   function beginTimer() {
     timer = setTimeout(
       () =>
-        hashDirectory(dirname, ignorer)
+        hashDirectory(dirname, ignorer, filename, republish)
           .catch(console.error)
           .finally(beginTimer),
       1_000,
@@ -93,12 +102,19 @@ async function legacyWatch(
   }
 }
 
-async function hashDirectory(dirname: string, ignorer: Ignorer) {
-  const filename = `/tmp/${dirname.replace(/\//g, '-')}.hash.txt`
-  const files = ignorer.filter(await glob(`${dirname}/**/*`, { nodir: true }))
+async function hashDirectory(
+  dirname: string,
+  ignorer: Ignorer,
+  filename: string,
+  onChange: () => any,
+) {
+  const files = await glob(`${dirname}/**/*`, {
+    nodir: true,
+    ignore: { ignored: (path) => ignorer.ignores(path.fullpath()) },
+  })
   const hashes = await Promise.all(
     files.map(async (file) => {
-      const contents = await readFile(file, 'utf-8')
+      const contents = await readFile(file)
       return createHash('sha256').update(contents).digest('hex')
     }),
   )
@@ -112,6 +128,8 @@ async function hashDirectory(dirname: string, ignorer: Ignorer) {
     if (error.code !== 'ENOENT') throw error
   }
 
-  if (newHash !== previousHash) await writeFile(filename, newHash)
-  return filename
+  if (newHash !== previousHash) {
+    await writeFile(filename, newHash)
+    onChange()
+  }
 }

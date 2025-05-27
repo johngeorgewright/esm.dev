@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`changed content > is updated 1`] = `
+"/* esm.sh - @esm.dev/package-1@0.0.1 */
+function o(){return"foos"}export{o as foos};
+//# sourceMappingURL=package-1.mjs.map"
+`;
+
+exports[`legacy watch > changed content > is updated 1`] = `
+"/* esm.sh - @esm.dev/package-1@0.0.1 */
+function o(){return"foos"}export{o as foos};
+//# sourceMappingURL=package-1.mjs.map"
+`;
