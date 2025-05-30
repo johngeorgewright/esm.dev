@@ -32,7 +32,7 @@ jobs:
           - '4873:4873'
 
     container:
-      image: oven/bun:1
+      image: ubuntu:latest
       env:
         ESM_ORIGIN: http://esm:8080
         ESM_STORAGE_PATH: /esmd
@@ -45,11 +45,14 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install
         run: bun install
 
       - name: Test Compilation
-        run: bunx tsc
+        run: bunx tsc --noEmit
 
       - name: Test
         run: bun run test
