@@ -45,6 +45,10 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
+      - name: Install ubuntu deps
+        run: |
+          apt install -y unzip
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
