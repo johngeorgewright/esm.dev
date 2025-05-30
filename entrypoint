@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
-bun src/cli.ts wait-for-registry && \
-bun src/cli.ts login && \
-bun src/cli.ts $@
+#!/usr/bin/env sh
+node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts wait-for-registry && \
+node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts login && \
+node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts $@

@@ -19,7 +19,7 @@ export async function unpublish({
 
 async function unpublishPackage(registry: string, name: string) {
   try {
-    await $`bunx npm unpublish --registry ${registry} --force ${name}`
+    await $`npm unpublish --registry ${registry} --force ${name}`
   } catch (error) {
     if (
       error instanceof ProcessOutput &&

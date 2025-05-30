@@ -1,5 +1,5 @@
-import { EnvOption } from '../../options/EnvOption.js'
-import type { CommandClass } from './CommandClass.js'
+import { EnvOption } from '../../options/EnvOption.ts'
+import type { CommandClass } from './CommandClass.ts'
 
 export function ESMServed<T extends CommandClass>(Base: T) {
   abstract class ESMServed extends Base {

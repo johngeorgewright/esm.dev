@@ -6,8 +6,10 @@
     "module": "NodeNext",
     "moduleDetection": "force",
     "allowJs": true,
+    "allowImportingTsExtensions": true,
 
     // Bundler mode
+    "noEmit": true,
     "moduleResolution": "nodenext",
     "verbatimModuleSyntax": true,
     "outDir": "dist",

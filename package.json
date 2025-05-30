@@ -11,9 +11,9 @@
     "esm.dev": "./dist/cli.js"
   },
   "scripts": {
-    "build": "bun run clean && tsc",
+    "build": "npm run clean && tsc",
     "clean": "rimraf dist",
-    "esm.dev": "bun ./src/cli.ts",
+    "esm.dev": "node --experimental-strip-types --no-warnings=ExperimentalWarning ./src/cli.ts",
     "prepare": "husky",
     "start": "docker compose up --detach --remove-orphans",
     "stop": "docker compose down",
@@ -34,10 +34,10 @@
     "@commitlint/cli": "19.8.1",
     "@commitlint/config-conventional": "19.8.1",
     "@commitlint/types": "19.8.1",
-    "@types/bun": "latest",
     "@types/http-proxy": "^1.17.16",
     "@types/lodash.debounce": "^4.0.9",
     "@types/mustache": "^4.2.6",
+    "@types/node": "^22.15.27",
     "@types/ramda": "^0.30.2",
     "husky": "9.1.7",
     "lint-staged": "16.0.0",
@@ -49,7 +49,7 @@
   },
   "lint-staged": {
     "*.{md,json,js,jsx,ts,tsx,yml,yaml}": [
-      "bunx prettier --ignore-path .gitignore --write"
+      "npx prettier --ignore-path .gitignore --write"
     ]
   },
   "dependencies": {

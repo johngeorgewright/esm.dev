@@ -1,6 +1,6 @@
 import { isNumber } from 'typanion'
-import { EnvOption } from '../../options/EnvOption.js'
-import type { CommandClass } from './CommandClass.js'
+import { EnvOption } from '../../options/EnvOption.ts'
+import type { CommandClass } from './CommandClass.ts'
 
 export function Servable<T extends CommandClass>(Base: T) {
   abstract class Servable extends Base {
