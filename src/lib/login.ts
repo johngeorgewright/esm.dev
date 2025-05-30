@@ -2,13 +2,7 @@ import { spawn } from 'node:child_process'
 
 export function login(registry: string) {
   return new Promise<number>((resolve) => {
-    const child = spawn('bunx', [
-      'npm',
-      'login',
-      '--registry',
-      registry,
-      '--quiet',
-    ])
+    const child = spawn('npm', ['login', '--registry', registry, '--quiet'])
 
     child.stderr.on('data', (d) => console.error(d.toString()))
 

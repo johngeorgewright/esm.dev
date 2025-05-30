@@ -10,7 +10,7 @@ It expects you to have a local version of ESM.sh and verdaccio running. It will 
 
 - You have [docker](https://www.docker.com/) installed
 - You have [docker compose](https://docs.docker.com/compose/) installed
-- You have a JavaScript runtime installed ([Node.js](https://nodejs.org/), [Deno](https://deno.com/), [Bun](https://bun.sh/) etc)
+- You have a JavaScript runtime installed, EG: [Node.js](https://nodejs.org/)
 
 ### Installation
 

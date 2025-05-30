@@ -1,5 +1,5 @@
 import { GeneratorCommand } from 'clipanion-generator-command'
-import { MustacheGenerator } from '../lib/MustacheGenerator.js'
+import { MustacheGenerator } from '../lib/MustacheGenerator.ts'
 
 export abstract class MustacheGeneratorCommand extends GeneratorCommand {
   override get generator() {

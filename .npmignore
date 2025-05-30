@@ -1,4 +1,3 @@
-bun.lock
 commitlint.config.cjs
 docker-bake.hcl
 docker-compose.yml
@@ -13,6 +12,7 @@ entrypoint
 .husky
 node_modules
 .nvmrc
+package-lock.json
 .prettierignore
 prettier.config.cjs
 release.config.js

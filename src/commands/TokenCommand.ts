@@ -1,5 +1,6 @@
 import { Command } from 'clipanion'
-import { RegistrySpecific } from './mixins/RegistrySpecific.js'
+import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
+import { readFile } from 'node:fs/promises'
 
 export class TokenCommand extends RegistrySpecific(Command) {
   static override paths = [['token']]
@@ -10,7 +11,7 @@ export class TokenCommand extends RegistrySpecific(Command) {
 
   override async execute() {
     const { default: escapeStringRegexp } = await import('escape-string-regexp')
-    const npmrc = await Bun.file(`~/.npmrc`).text()
+    const npmrc = await readFile('~/.npmrc', 'utf-8')
     const url = new URL(this.registry)
     const regex = new RegExp(
       `^//${escapeStringRegexp(url.hostname)}/:_authToken=(.*)$`,

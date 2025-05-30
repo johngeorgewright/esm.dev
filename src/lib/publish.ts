@@ -10,5 +10,5 @@ export async function publish({
 }) {
   await $({
     cwd: path.resolve(packageRoot),
-  })`bunx npm publish --registry ${registry}`
+  })`npm publish --registry ${registry}`
 }

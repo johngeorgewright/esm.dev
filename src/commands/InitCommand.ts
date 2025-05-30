@@ -1,6 +1,6 @@
-import { ESMDevCommand } from './ESMDevCommand.js'
-import { PackagePathSpecific } from './mixins/PackagePathSpecific.js'
-import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.js'
+import { ESMDevCommand } from './ESMDevCommand.ts'
+import { PackagePathSpecific } from './mixins/PackagePathSpecific.ts'
+import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.ts'
 import { Option } from 'clipanion'
 import { isNumber } from 'typanion'
 
