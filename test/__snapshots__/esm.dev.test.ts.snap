@@ -1,12 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`changed content > is updated 1`] = `
+exports[`access > ESM server retreives watched packages 1`] = `
+"/* esm.sh - @esm.dev/package-1@0.0.1 */
+function o(){return"foo"}export{o as foo};
+//# sourceMappingURL=package-1.mjs.map"
+`;
+
+exports[`access > ESM server retreives watched packages 2`] = `
+"/* esm.sh - @esm.dev/package-2@0.0.1 */
+export * from "/@esm.dev/package-2@0.0.1/es2022/package-2.mjs";
+"
+`;
+
+exports[`watching with 'legacy' method > is updated 1`] = `
 "/* esm.sh - @esm.dev/package-1@0.0.1 */
 function o(){return"foos"}export{o as foos};
 //# sourceMappingURL=package-1.mjs.map"
 `;
 
-exports[`legacy watch > changed content > is updated 1`] = `
+exports[`watching with 'modern' method > is updated 1`] = `
 "/* esm.sh - @esm.dev/package-1@0.0.1 */
 function o(){return"foos"}export{o as foos};
 //# sourceMappingURL=package-1.mjs.map"
