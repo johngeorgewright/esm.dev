@@ -20,3 +20,31 @@ export async function until({
   }
   return false
 }
+
+export async function waitForEndpoint({
+  interval = 300,
+  timeout = 10_000,
+  endpoint,
+}: {
+  interval?: number
+  timeout?: number
+  endpoint: string
+}) {
+  if (
+    !(await until({
+      interval,
+      timeout,
+      async try(signal) {
+        const response = await fetch(endpoint, { signal })
+        return response.ok
+      },
+    }))
+  )
+    throw new EndpointUnavailableError()
+}
+
+export class EndpointUnavailableError extends Error {
+  constructor() {
+    super('Endpoint not available')
+  }
+}

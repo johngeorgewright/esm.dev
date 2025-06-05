@@ -15,18 +15,16 @@ export function Retryable<T extends CommandClass>(Base: T) {
     })
 
     protected async retry(endpoint: string) {
-      const { until } = await import('../../lib/until.ts')
-      if (
-        !(await until({
-          ...this,
-          try: async (signal) => {
-            const response = await fetch(endpoint, { signal })
-            return response.ok
-          },
-        }))
-      ) {
-        this.context.stderr.write(`${endpoint} is not available\n`)
-        return 1
+      const { EndpointUnavailableError, waitForEndpoint } = await import(
+        '../../lib/until.ts'
+      )
+      try {
+        await waitForEndpoint({ ...this, endpoint })
+      } catch (error) {
+        if (error instanceof EndpointUnavailableError) {
+          this.context.stderr.write(`${endpoint} is not available\n`)
+          return 1
+        } else throw error
       }
     }
   }
