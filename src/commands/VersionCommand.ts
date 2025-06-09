@@ -1,5 +1,4 @@
 import { Command } from 'clipanion'
-import { readFile } from 'node:fs/promises'
 
 export class VersionCommand extends Command {
   static override paths = [['version']]
@@ -9,7 +8,10 @@ export class VersionCommand extends Command {
   })
 
   override async execute(): Promise<number | void> {
-    const path = await import('node:path')
+    const [path, { readFile }] = await Promise.all([
+      import('node:path'),
+      import('node:fs/promises'),
+    ])
     const pckg = JSON.parse(
       await readFile(
         path.resolve(import.meta.dirname, '..', '..', 'package.json'),
