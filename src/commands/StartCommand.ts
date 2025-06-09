@@ -13,8 +13,10 @@ export class StartCommand extends Servable(
   })
 
   override async execute() {
-    const { watch } = await import('../lib/watch.ts')
-    const { serve } = await import('../lib/server.ts')
+    const [{ watch }, { serve }] = await Promise.all([
+      import('../lib/watch.ts'),
+      import('../lib/server.ts'),
+    ])
     serve(this.port, this.esmOrigin)
     await this.eachPackagePath((packagePath) => watch(packagePath, this))
   }
