@@ -4,7 +4,7 @@ import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 export class TokenCommand extends RegistrySpecific(Command) {
   static override paths = [['token']]
 
-  static override usage = Command.Usage({
+  static override usage = this.Usage({
     description: 'Get the NPM token',
   })
 

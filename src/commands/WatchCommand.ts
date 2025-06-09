@@ -4,7 +4,7 @@ import { Watchable } from './mixins/Watchable.ts'
 export class WatchCommand extends Watchable(ESMDevCommand) {
   static override paths = [['watch']]
 
-  static override usage = ESMDevCommand.Usage({
+  static override usage = this.Usage({
     description: 'Watches directories and republishes on changes',
   })
 

@@ -7,7 +7,7 @@ export class WaitForRegistryCommand extends Retryable(
 ) {
   static override paths = [['wait-for-registry'], ['wfr']]
 
-  static override usage = Command.Usage({
+  static override usage = this.Usage({
     description: 'wait for the registry to be online',
   })
 

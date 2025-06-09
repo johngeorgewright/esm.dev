@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 export class VersionCommand extends Command {
   static override paths = [['version']]
 
-  static override usage = Command.Usage({
+  static override usage = this.Usage({
     description: 'Display the version of esm.dev',
   })
 

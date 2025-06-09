@@ -1,4 +1,3 @@
-import { ESMDevCommand } from './ESMDevCommand.ts'
 import { PackagePathSpecific } from './mixins/PackagePathSpecific.ts'
 import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.ts'
 import { Option } from 'clipanion'
@@ -7,7 +6,7 @@ import { isNumber } from 'typanion'
 export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
   static override paths = [['init']]
 
-  static override usage = ESMDevCommand.Usage({
+  static override usage = this.Usage({
     description: 'Initialises your repo ready to work with ESM.sh locally',
     examples: [
       ['Create a minimal template', 'esm.dev init'],

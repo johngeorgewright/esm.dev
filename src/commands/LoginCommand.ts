@@ -4,7 +4,7 @@ import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 export class LoginCommand extends RegistrySpecific(Command) {
   static override paths = [['login']]
 
-  static override usage = Command.Usage({
+  static override usage = this.Usage({
     description: 'Login in to the NPM registry',
   })
 

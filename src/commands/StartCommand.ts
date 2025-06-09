@@ -8,7 +8,7 @@ export class StartCommand extends Servable(
 ) {
   static override paths = [['start']]
 
-  static override usage = ESMDevCommand.Usage({
+  static override usage = this.Usage({
     description: 'Runs a server and concurrently watches a file system',
   })
 

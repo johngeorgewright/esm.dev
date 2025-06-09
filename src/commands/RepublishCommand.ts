@@ -3,7 +3,7 @@ import { ESMDevCommand } from './ESMDevCommand.ts'
 export class RepublishCommand extends ESMDevCommand {
   static override paths = [['republish']]
 
-  static override usage = ESMDevCommand.Usage({
+  static override usage = this.Usage({
     description:
       'Removes the references, of given packages, from the ESM server and registry and republishes.',
   })
