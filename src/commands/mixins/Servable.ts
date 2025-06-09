@@ -1,5 +1,5 @@
 import { isNumber } from 'typanion'
-import { EnvOption } from '../../options/EnvOption.ts'
+import { EnvOption } from '../options/EnvOption.ts'
 import type { CommandClass } from './CommandClass.ts'
 
 export function Servable<T extends CommandClass>(Base: T) {
