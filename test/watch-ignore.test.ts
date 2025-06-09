@@ -1,8 +1,16 @@
-import { afterEach, beforeEach, describe, expect, Mock, vi, test } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  type Mock,
+  vi,
+  test,
+} from 'vitest'
 import * as path from 'node:path'
 import { rm, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { queue } from '../src/lib/queue.js'
+import { queue } from '../src/lib/queue.ts'
 
 describe.each([
   {

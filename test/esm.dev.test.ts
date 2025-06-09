@@ -13,26 +13,11 @@ import { compose, T } from 'ramda'
 import { serve } from '../src/lib/server.js'
 import { watch } from '../src/lib/watch.js'
 import { login } from '../src/lib/login.js'
-import { until } from '../src/lib/until.js'
-
-const esmOrigin = process.env.ESM_ORIGIN ?? 'http://localhost:8080'
-const esmStoragePath = process.env.ESM_STORAGE_PATH ?? 'docker-storage/esm/esmd'
-const port = Number(process.env.PORT ?? '3000')
-const registry = process.env.REGISTRY ?? 'http://localhost:4873'
+import { waitForEndpoint } from '../src/lib/until.js'
+import { esmOrigin, esmStoragePath, port, registry } from './constants.ts'
 
 beforeAll(async () => {
-  if (
-    !(await until({
-      interval: 300,
-      timeout: 10_000,
-      async try(signal) {
-        const response = await fetch(registry, { signal })
-        return response.ok
-      },
-    }))
-  )
-    throw new Error('Registry not available')
-
+  await waitForEndpoint({ endpoint: registry })
   await login(registry)
 })
 
