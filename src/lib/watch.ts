@@ -129,7 +129,6 @@ async function hashDirectory(
   }
 
   if (newHash !== previousHash) {
-    await writeFile(filename, newHash)
-    onChange()
+    await Promise.all([writeFile(filename, newHash), onChange()])
   }
 }

@@ -24,13 +24,15 @@ beforeAll(async () => {
 describe('access', () => {
   start()
 
-  test('ESM server retreives watched packages', async () => {
-    const response1 = await fetch(
-      `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
-    )
-    expect(await response1.text()).matchSnapshot()
-    const response2 = await fetch(`http://localhost:${port}/@esm.dev/package-2`)
-    expect(await response2.text()).toMatchSnapshot()
+  test.for([
+    {
+      endpoint: '/@esm.dev/package-1@0.0.1/es2022/package-1.mjs',
+      pckg: 'pacakge-1',
+    },
+    { endpoint: '/@esm.dev/package-2', pckg: 'package-2' },
+  ])('ESM server retreives watched $pckg', async ({ endpoint }) => {
+    const response = await fetch(`http://localhost:${port}${endpoint}`)
+    expect(await response.text()).matchSnapshot()
   })
 })
 
