@@ -8,7 +8,7 @@
     ".": "./src/cli.ts"
   },
   "bin": {
-    "esm.dev": "./dist/cli.js"
+    "esm.dev": "./src/cli.ts"
   },
   "scripts": {
     "build": "npm run clean && tsc",
