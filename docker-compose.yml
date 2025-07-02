@@ -8,7 +8,8 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - ./docker-storage/esm/esmd:/esmd
+      - ./docker-storage/esm/npm:/esmd/npm
+      - ./docker-storage/esm/storage:/esmd/storage
   npm:
     image: verdaccio/verdaccio:latest
     ports:

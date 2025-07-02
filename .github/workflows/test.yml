@@ -24,7 +24,8 @@ jobs:
         ports:
           - '8080:8080'
         volumes:
-          - /home/runner/docker-storage/esmd:/esmd
+          - /home/runner/docker-storage/esmd/npm:/esmd/npm
+          - /home/runner/docker-storage/esmd/storage:/esmd/storage
 
       npm:
         image: verdaccio/verdaccio:latest
