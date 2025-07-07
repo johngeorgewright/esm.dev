@@ -1,6 +1,6 @@
 {
   "name": "esm.dev",
-  "version": "1.8.20",
+  "version": "1.8.25",
   "description": "TypeScript library template",
   "type": "module",
   "sideEffects": false,
