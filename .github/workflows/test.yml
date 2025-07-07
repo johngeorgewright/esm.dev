@@ -13,6 +13,10 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [20, 22, 24]
+
     services:
       esm:
         image: ghcr.io/esm-dev/esm.sh:latest
@@ -33,7 +37,7 @@ jobs:
           - '4873:4873'
 
     container:
-      image: node:lts-alpine
+      image: node:{{ matrix.node-version }}-alpine
       env:
         ESM_ORIGIN: http://esm:8080
         ESM_STORAGE_PATH: /esmd
@@ -46,7 +50,7 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Install ubuntu deps
+      - name: Install Bash
         run: apk update && apk add bash
 
       - name: Install
