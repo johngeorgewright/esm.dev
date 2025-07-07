@@ -21,7 +21,7 @@ jobs:
     permissions:
       packages: write
     with:
-      image-name: ghcr.io/{{ github.repository }}
+      image-name: ghcr.io/${{ github.repository }}
       image-tag: ${{ inputs.version }}
       registry: ghcr.io
     secrets:

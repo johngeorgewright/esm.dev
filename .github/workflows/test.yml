@@ -37,7 +37,7 @@ jobs:
           - '4873:4873'
 
     container:
-      image: node:{{ matrix.node-version }}-alpine
+      image: node:${{ matrix.node-version }}-alpine
       env:
         ESM_ORIGIN: http://esm:8080
         ESM_STORAGE_PATH: /esmd
