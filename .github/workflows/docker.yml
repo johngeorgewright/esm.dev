@@ -19,11 +19,12 @@ jobs:
   push-image:
     uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
     permissions:
+      contents: read
       packages: write
     with:
       image-name: ghcr.io/johngeorgewright/esm.dev
       image-tag: ${{ inputs.version }}
       registry: ghcr.io
     secrets:
-      DOCKER_REPO_USERNAME: ${{ github.actor }}
-      DOCKER_REPO_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REPO_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_REPO_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
