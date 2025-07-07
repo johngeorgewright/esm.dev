@@ -14,6 +14,6 @@ FROM base AS release
 RUN apk update && apk add bash
 COPY --from=install /temp/prod/node_modules node_modules
 COPY src src
-COPY entrypoint .
+COPY entrypoint package.json ./
 
 ENTRYPOINT [ "./entrypoint" ]

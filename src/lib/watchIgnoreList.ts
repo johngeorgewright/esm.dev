@@ -5,7 +5,7 @@ import { access, constants } from 'node:fs/promises'
 import * as path from 'node:path'
 import { createInterface as createReadlineInterface } from 'node:readline/promises'
 
-export async function getWatchIgnorer(dirname: string) {
+export async function getWatchIgnorer(dirname: string): Promise<Ignorer> {
   const ignoreList = await getIgnoreList(dirname)
   return ignoreList?.basename === '.gitignore'
     ? createGitIgnore(ignoreList.ignoreList)

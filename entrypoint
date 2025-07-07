@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
-node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts wait-for-registry && \
-node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts login && \
-node --experimental-strip-types --no-warnings=ExperimentalWarning src/cli.ts $@
+npm run --silent esm.dev -- wait-for-registry && \
+npm run --silent esm.dev -- login && \
+npm run --silent esm.dev -- $@
