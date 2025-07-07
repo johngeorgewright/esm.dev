@@ -15,7 +15,7 @@ export async function until({
       if (await Try(signal)) return true
     } catch (error) {}
     try {
-      await setTimeout(interval, { signal })
+      await setTimeout(interval, null, { signal })
     } catch (error) {}
   }
   return false
