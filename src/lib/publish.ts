@@ -7,7 +7,7 @@ export async function publish({
 }: {
   packageRoot: string
   registry: string
-}) {
+}): Promise<void> {
   await $({
     cwd: path.resolve(packageRoot),
   })`npm publish --registry ${registry}`

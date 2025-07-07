@@ -10,7 +10,7 @@ export async function unpublish({
   registry: string
   esmStoragePath: string
   name: string
-}) {
+}): Promise<void> {
   await Promise.all([
     unpublishPackage(registry, name),
     deleteESMCache(esmStoragePath, name),

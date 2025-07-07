@@ -8,7 +8,7 @@ export async function until({
   interval: number
   timeout: number
   try(signal: AbortSignal): Promise<boolean>
-}) {
+}): Promise<boolean> {
   const signal = AbortSignal.timeout(timeout)
   while (!signal.aborted) {
     try {
@@ -29,7 +29,7 @@ export async function waitForEndpoint({
   interval?: number
   timeout?: number
   endpoint: string
-}) {
+}): Promise<void> {
   if (
     !(await until({
       interval,

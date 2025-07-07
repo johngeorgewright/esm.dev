@@ -2,7 +2,7 @@ import { queue } from './queue.ts'
 import { createServer } from 'node:http'
 import httpProxy from 'http-proxy'
 
-export function serve(port: number, esmOrigin: string) {
+export function serve(port: number, esmOrigin: string): () => void {
   const proxy = httpProxy.createProxyServer()
 
   const server = createServer((req, res) => {
