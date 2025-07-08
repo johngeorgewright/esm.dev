@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @type {import('@commitlint/types').UserConfig}
+ * @type {import('npm:@commitlint/types').UserConfig}
  */
 module.exports = {
   extends: ['@commitlint/config-conventional'],

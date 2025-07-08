@@ -14,7 +14,7 @@ export class VersionCommand extends Command {
     ])
     const pckg = JSON.parse(
       await readFile(
-        path.resolve(import.meta.dirname, '..', '..', 'package.json'),
+        path.resolve(import.meta.dirname ?? '', '..', '..', 'package.json'),
         'utf-8',
       ),
     )

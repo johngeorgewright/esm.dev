@@ -1,5 +1,3 @@
-import { watch as fsWatch } from 'node:fs'
-import { republish } from './republish.ts'
 import { getPackageMeta } from './getPackageMeta.ts'
 import { readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
@@ -7,16 +5,27 @@ import { glob } from 'glob'
 import { queue, queuedDebounce } from './queue.ts'
 import { getWatchIgnorer, type Ignorer } from './watchIgnoreList.ts'
 import { tempfile } from 'zx'
+import { Container } from 'typedi'
+import * as pathHelper from 'node:path'
+import './republish.ts'
 
 export async function watch(
   packagePath: string,
-  opts: { registry: string; esmStoragePath: string; legacyMethod?: boolean },
+  opts: {
+    registry: string
+    esmStoragePath: string
+    legacyMethod?: boolean
+  },
 ): Promise<() => void> {
   const {
     name,
     packageRoot,
     private: prvte,
   } = await getPackageMeta(packagePath)
+
+  const republish = Container.get(
+    'republish',
+  ) as typeof import('./republish.ts').republish
 
   if (prvte) {
     console.info(`${name} is a private package... ignoring`)
@@ -40,41 +49,62 @@ export async function watch(
     else throw error
   }
 
-  return opts.legacyMethod
-    ? legacyWatch(abortController, packageRoot, republishPackage)
-    : modernWatch(
-        abortController,
-        packageRoot,
-        queuedDebounce(republishPackage, 1_000, signal),
-      )
+  if (opts.legacyMethod) {
+    await legacyWatch(signal, packageRoot, republishPackage)
+  } else {
+    modernWatch(
+      signal,
+      packageRoot,
+      queuedDebounce(republishPackage, 1_000, signal),
+    )
+  }
+
+  return () => {
+    console.info(
+      `Stop${opts.legacyMethod ? ' (legacy)' : ''} watching`,
+      packageRoot,
+    )
+    abortController.abort()
+  }
 }
 
 async function modernWatch(
-  abortController: AbortController,
+  signal: AbortSignal,
   dirname: string,
   republish: (filename?: string | undefined) => Promise<void>,
 ) {
-  abortController.signal.addEventListener('abort', () => {
-    console.info('Stop watching', dirname)
-    watcher.close()
-  })
-
   const ignorer = await getWatchIgnorer(dirname)
-  const watcher = fsWatch(
+
+  using watcher = Deno.watchFs(
     dirname,
-    { recursive: true /*, signal: abortController.signal */ },
-    (_, filename) =>
-      (filename && ignorer.ignores(filename)) ||
-      republish(filename ?? '').catch((error) => {
-        if (error.name !== 'AbortError') throw error
-      }),
+    { recursive: true },
   )
 
-  return () => abortController.abort()
+  signal.addEventListener('abort', () => {
+    try {
+      watcher.close()
+    } catch (_) {
+      //
+    }
+  })
+
+  for await (const event of watcher) {
+    let paths = event.paths
+      .filter((path) => path.startsWith(dirname))
+      .map((path) => pathHelper.relative(dirname, path))
+    paths = ignorer.filter(paths)
+    if (paths.length) {
+      try {
+        await republish(paths[0])
+      } catch (error: any) {
+        if (error.name !== 'AbortError') throw error
+      }
+    }
+  }
 }
 
 async function legacyWatch(
-  abortController: AbortController,
+  signal: AbortSignal,
   dirname: string,
   republish: (filename?: string | undefined) => Promise<void>,
 ) {
@@ -82,14 +112,13 @@ async function legacyWatch(
   const filename = tempfile()
   await hashDirectory(dirname, ignorer, filename, () => {})
 
-  abortController.signal.addEventListener('abort', () => {
+  signal.addEventListener('abort', () => {
     console.info('Stop (legacy) watching', dirname)
     clearTimeout(timer)
   })
 
-  let timer: NodeJS.Timeout | undefined
+  let timer: number
   beginTimer()
-  return () => abortController.abort()
 
   function beginTimer() {
     timer = setTimeout(

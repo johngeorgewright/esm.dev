@@ -1,7 +1,7 @@
 import debounce from 'lodash.debounce'
 import throat from 'throat'
 
-export async function queue<TResult, TArgs extends any[] = []>(
+export function queue<TResult, TArgs extends any[] = []>(
   fn: (...args: TArgs) => Promise<TResult>,
   signal?: AbortSignal,
 ): Promise<TResult> {
@@ -24,6 +24,8 @@ export function queuedDebounce<Args extends unknown[], R>(
 ): (...args: Args) => Promise<Awaited<R>> {
   let promiseWithResolvers: PromiseWithResolvers<R> | undefined
   let queuedPromise: Promise<Awaited<R>> | undefined
+
+  signal?.throwIfAborted()
 
   signal?.addEventListener('abort', (reason) => {
     debounced.cancel()
@@ -51,6 +53,7 @@ export function queuedDebounce<Args extends unknown[], R>(
     if (!queuedPromise) {
       promiseWithResolvers = Promise.withResolvers<R>()
       queuedPromise = queue(
+        // deno-lint-ignore require-await
         async () => promiseWithResolvers?.promise,
       ) as Promise<Awaited<R>>
     }

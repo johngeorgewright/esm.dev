@@ -1,33 +1,45 @@
 import { queue } from './queue.ts'
-import { createServer } from 'node:http'
-import httpProxy from 'http-proxy'
 
-export function serve(port: number, esmOrigin: string): () => void {
-  const proxy = httpProxy.createProxyServer()
+export async function serve(
+  port: number,
+  esmOrigin: string,
+): Promise<() => Promise<void>> {
+  const { promise, resolve } = Promise.withResolvers<void>()
 
-  const server = createServer((req, res) => {
-    queue(
-      () =>
-        new Promise<void>((resolve, reject) => {
-          console.info('Proxying', req.url)
-          req.on('error', reject)
-          res.on('error', reject)
-          res.on('close', resolve)
-          proxy.web(req, res, { target: esmOrigin })
-        }),
-    ).catch((error) => {
-      res.statusCode = 500
-      res.setHeader('Content-Type', 'application/json; charset=utf-8')
-      res.write(JSON.stringify(error))
-      res.end()
-    })
-  }).listen(port, () => {
-    console.info('ESM proxy server listining on', server.address())
-  })
+  const server = Deno.serve({
+    port,
+    onListen(netAddr) {
+      console.info('ESM proxy server listining on', netAddr)
+      resolve()
+    },
+  }, (request) =>
+    queue(() => {
+      const { pathname, search } = new URL(request.url)
+      const url = new URL('.' + pathname, esmOrigin)
+      url.search = search
 
-  return () => {
+      const headers = new Headers(request.headers)
+      headers.set('Host', url.hostname)
+
+      return fetch(url, {
+        method: request.method,
+        headers,
+        body: request.body,
+        redirect: 'manual',
+      })
+    }).catch((error) =>
+      new Response(JSON.stringify(error), {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
+        status: 500,
+      })
+    ))
+
+  await promise
+
+  return async () => {
     console.info('closing the server')
-    server.closeAllConnections()
-    server.close()
+    await server.shutdown()
   }
 }

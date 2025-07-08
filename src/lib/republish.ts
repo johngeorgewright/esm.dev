@@ -1,3 +1,4 @@
+import { Container } from 'typedi'
 import { getPackageMeta } from './getPackageMeta.ts'
 import { publish } from './publish.ts'
 import { unpublish } from './unpublish.ts'
@@ -14,3 +15,5 @@ export async function republish(
   await unpublish({ ...opts, name })
   await publish({ ...opts, packageRoot })
 }
+
+Container.set('republish', republish)
