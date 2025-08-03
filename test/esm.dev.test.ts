@@ -53,7 +53,7 @@ Deno.test('dev environment', async (t) => {
       { legacyMethod: true, name: 'legacy', interval: 3_000 },
     ]
   ) {
-    await t.step(`watching with ${name} method`, async (t) => {
+    await t.step(`watching with ${name} method`, async () => {
       await using _disposable = await start(legacyMethod)
       await using _change = await changeMainExport(interval)
       const response = await fetch(
