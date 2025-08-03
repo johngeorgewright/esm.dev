@@ -1,8 +1,12 @@
 # esm.dev
 
-A set of utils when working with local NPM packages and [esm.sh](https://esm.sh/).
+A set of utils when working with local NPM packages and
+[esm.sh](https://esm.sh/).
 
-It expects you to have a local version of ESM.sh and verdaccio running. It will monitor changes in a configurable set of directories. When it sees any changes, it will unpublish from verdaccio, remove builds & cache from ESM.sh and then re-publish the package.
+It expects you to have a local version of ESM.sh and verdaccio running. It will
+monitor changes in a configurable set of directories. When it sees any changes,
+it will unpublish from verdaccio, remove builds & cache from ESM.sh and then
+re-publish the package.
 
 ## Usage
 

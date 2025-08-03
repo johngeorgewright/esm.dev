@@ -4,7 +4,13 @@ import { setTimeout } from 'node:timers/promises'
 import { queue } from '../src/lib/queue.ts'
 import { assertSpyCalls, type Spy, spy } from 'jsr:@std/testing/mock'
 import { watch } from '../src/lib/watch.ts'
-import { Container } from 'typedi'
+import {
+  getRepublisher,
+  type Republish,
+  setRepublisher,
+} from '../src/lib/republish.ts'
+// for Node.js
+import 'npm:disposablestack/auto'
 
 Deno.test('Ignoring files when watching', async (t) => {
   for (
@@ -43,12 +49,12 @@ Deno.test('Ignoring files when watching', async (t) => {
 })
 
 function disposableRepublishMock(): Disposable & { spy: Spy } {
-  const original = Container.get('republish')
+  const original = getRepublisher()
   const republishSpy = spy(() => Promise.resolve())
-  Container.set('republish', republishSpy)
+  setRepublisher(republishSpy as Republish)
   return {
     spy: republishSpy,
-    [Symbol.dispose]: () => Container.set('republish', original),
+    [Symbol.dispose]: () => setRepublisher(original),
   }
 }
 

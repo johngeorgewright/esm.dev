@@ -1,11 +1,13 @@
-import { assertSnapshot } from 'jsr:@std/testing/snapshot'
-import { readFile, writeFile } from 'node:fs/promises'
+import { equal } from 'jsr:@std/assert/equal'
 import { setTimeout } from 'node:timers/promises'
 import { serve } from '../src/lib/server.ts'
 import { watch } from '../src/lib/watch.ts'
 import { login } from '../src/lib/login.ts'
 import { waitForEndpoint } from '../src/lib/until.ts'
 import { esmOrigin, esmStoragePath, port, registry } from './constants.ts'
+import { readJSONFile, writeJSONFile } from '../src/lib/fs.ts'
+// for Node.js
+import 'npm:disposablestack/auto'
 
 Deno.test('dev environment', async (t) => {
   await t.step('setup', async () => {
@@ -16,20 +18,33 @@ Deno.test('dev environment', async (t) => {
   await t.step('access', async (t) => {
     await using _disposable = await start()
 
-    for (
-      const { endpoint, pckg } of [
-        {
-          endpoint: '/@esm.dev/package-1@0.0.1/es2022/package-1.mjs',
-          pckg: 'pacakge-1',
-        },
-        { endpoint: '/@esm.dev/package-2', pckg: 'package-2' },
-      ]
-    ) {
-      await t.step(`ESM server retreives watched ${pckg}`, async (t) => {
-        const response = await fetch(`http://localhost:${port}${endpoint}`)
-        await assertSnapshot(t, await response.text())
-      })
-    }
+    await t.step('package-1', async () => {
+      const response = await fetch(
+        `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+      )
+      equal(
+        (await response.text()).split('\n'),
+        [
+          '/* esm.sh - @esm.dev/package-1@0.0.1 */',
+          'function o(){return"foo"}export{o as foo};',
+          '//# sourceMappingURL=package-1.mjs.map',
+        ],
+      )
+    })
+
+    await t.step('package-2', async () => {
+      const response = await fetch(
+        `http://localhost:${port}/@esm.dev/package-2`,
+      )
+      equal(
+        (await response.text()).split('\n'),
+        [
+          '/* esm.sh - @esm.dev/package-2@0.0.1 */',
+          'export * from "/@esm.dev/package-2@0.0.1/denonext/package-2.mjs";',
+          '',
+        ],
+      )
+    })
   })
 
   for (
@@ -40,11 +55,18 @@ Deno.test('dev environment', async (t) => {
   ) {
     await t.step(`watching with ${name} method`, async (t) => {
       await using _disposable = await start(legacyMethod)
-      await using _mainExport = await changeMainExportDisposable(interval)
+      await using _change = await changeMainExport(interval)
       const response = await fetch(
         `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
       )
-      await assertSnapshot(t, await response.text())
+      equal(
+        (await response.text()).split('\n'),
+        [
+          '/* esm.sh - @esm.dev/package-1@0.0.1 */',
+          'function o(){return"foo"}export{o as foo};',
+          '//# sourceMappingURL=package-1.mjs.map',
+        ],
+      )
     })
   }
 })
@@ -71,19 +93,16 @@ async function start(legacyMethod?: boolean): Promise<AsyncDisposable> {
   return disposableStack
 }
 
-async function changeMainExportDisposable(
-  interval: number,
-): Promise<AsyncDisposable> {
-  await changeMainExport('./src/foos.ts', interval)
-  return {
-    [Symbol.asyncDispose]: () => changeMainExport('./src/foo.ts', interval),
-  }
-}
-
-async function changeMainExport(to: string, interval: number) {
+async function changeMainExport(interval: number): Promise<AsyncDisposable> {
   const filename = 'test/packages/package-1/package.json'
-  const json = JSON.parse(await readFile(filename, 'utf-8'))
-  json.exports['.'] = to
-  await writeFile(filename, JSON.stringify(json, null, 2))
+  const json = await readJSONFile(filename)
+  await writeJSONFile(
+    filename,
+    { ...json, exports: { '.': json.exports['.'] + '-changed' } },
+  )
   await setTimeout(interval)
+  return {
+    [Symbol.asyncDispose]: () =>
+      Deno.writeTextFile(filename, JSON.stringify(json, null, 2)),
+  }
 }

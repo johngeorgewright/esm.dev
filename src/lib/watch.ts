@@ -1,13 +1,11 @@
 import { getPackageMeta } from './getPackageMeta.ts'
-import { readFile, writeFile } from 'node:fs/promises'
-import { createHash } from 'node:crypto'
 import { glob } from 'glob'
 import { queue, queuedDebounce } from './queue.ts'
 import { getWatchIgnorer, type Ignorer } from './watchIgnoreList.ts'
 import { tempfile } from 'zx'
-import { Container } from 'typedi'
 import * as pathHelper from 'node:path'
-import './republish.ts'
+import { encodeHex } from '@std/encoding'
+import { getRepublisher } from './republish.ts'
 
 export async function watch(
   packagePath: string,
@@ -23,9 +21,7 @@ export async function watch(
     private: prvte,
   } = await getPackageMeta(packagePath)
 
-  const republish = Container.get(
-    'republish',
-  ) as typeof import('./republish.ts').republish
+  const republish = getRepublisher()
 
   if (prvte) {
     console.info(`${name} is a private package... ignoring`)
@@ -88,17 +84,25 @@ async function modernWatch(
     }
   })
 
-  for await (const event of watcher) {
-    let paths = event.paths
-      .filter((path) => path.startsWith(dirname))
-      .map((path) => pathHelper.relative(dirname, path))
-    paths = ignorer.filter(paths)
-    if (paths.length) {
-      try {
-        await republish(paths[0])
-      } catch (error: any) {
-        if (error.name !== 'AbortError') throw error
+  try {
+    for await (const event of watcher) {
+      let paths = event.paths
+        .filter((path) => path.startsWith(dirname))
+        .map((path) => pathHelper.relative(dirname, path))
+      paths = ignorer.filter(paths)
+      if (paths.length) {
+        try {
+          await republish(paths[0])
+        } catch (error: any) {
+          if (error.name !== 'AbortError' && error.code !== 'ABORT_ERR') {
+            throw error
+          }
+        }
       }
+    }
+  } catch (error) {
+    if (!(error instanceof Error && error.name === 'AbortError')) {
+      throw error
     }
   }
 }
@@ -141,23 +145,26 @@ async function hashDirectory(
     nodir: true,
     ignore: { ignored: (path) => ignorer.ignores(path.fullpath()) },
   })
+
   const hashes = await Promise.all(
     files.map(async (file) => {
-      const contents = await readFile(file)
-      return createHash('sha256').update(contents).digest('hex')
+      const contents = await Deno.readFile(file)
+      const hashBuffer = await crypto.subtle.digest('SHA-256', contents)
+      return encodeHex(hashBuffer)
     }),
   )
+
   const newHash = hashes.join('')
 
   let previousHash = ''
 
   try {
-    previousHash = await readFile(filename, 'utf-8')
+    previousHash = await Deno.readTextFile(filename)
   } catch (error: any) {
     if (error.code !== 'ENOENT') throw error
   }
 
   if (newHash !== previousHash) {
-    await Promise.all([writeFile(filename, newHash), onChange()])
+    await Promise.all([Deno.writeTextFile(filename, newHash), onChange()])
   }
 }

@@ -9,7 +9,8 @@ export class RepublishCommand extends ESMDevCommand {
   })
 
   override async execute() {
-    const { republish } = await import('../lib/republish.ts')
+    const { getRepublisher } = await import('../lib/republish.ts')
+    const republish = getRepublisher()
     await this.eachPackagePath((packagePath) => republish(packagePath, this))
   }
 }

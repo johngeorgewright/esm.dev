@@ -3,4 +3,5 @@ docker-storage
 .env
 *.log
 node_modules
+npm
 tsconfig.tsbuildinfo

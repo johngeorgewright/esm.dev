@@ -13,10 +13,6 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [22, 24]
-
     services:
       esm:
         image: ghcr.io/esm-dev/esm.sh:latest
@@ -37,7 +33,7 @@ jobs:
           - '4873:4873'
 
     container:
-      image: node:${{ matrix.node-version }}-alpine
+      image: denoland/deno:alpine
       env:
         ESM_ORIGIN: http://esm:8080
         ESM_STORAGE_PATH: /esmd
@@ -54,10 +50,16 @@ jobs:
         run: apk update && apk add bash
 
       - name: Install
-        run: npm ci
+        run: deno install
+
+      - name: Lint
+        run: deno lint
 
       - name: Test Compilation
-        run: npm run build
+        run: deno check
 
       - name: Test
-        run: npm test
+        run: deno task test
+
+      - name: Test NPM Build
+        run: deno task npm --test

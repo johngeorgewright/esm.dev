@@ -1,4 +1,3 @@
-#!/usr/bin/env node --experimental-strip-types --no-warnings=ExperimentalWarning
 import { runExit } from 'clipanion'
 import { WatchCommand } from './commands/WatchCommand.ts'
 import { RepublishCommand } from './commands/RepublishCommand.ts'
