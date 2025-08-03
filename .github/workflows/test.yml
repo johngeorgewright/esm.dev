@@ -32,15 +32,10 @@ jobs:
         ports:
           - '4873:4873'
 
-    container:
-      image: denoland/deno:alpine
-      env:
-        ESM_ORIGIN: http://esm:8080
-        ESM_STORAGE_PATH: /esmd
-        REGISTRY: http://npm:4873
-      options: --user root
-      volumes:
-        - /home/runner/docker-storage/esmd:/esmd
+    env:
+      ESM_ORIGIN: http://localhost:8080
+      ESM_STORAGE_PATH: /home/runner/docker-storage/esmd
+      REGISTRY: http://localhost:4873 
 
     steps:
       - name: Checkout project
@@ -51,8 +46,10 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Bash
-        run: apk update && apk add bash
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
 
       - name: Install
         run: deno install
