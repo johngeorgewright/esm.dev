@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   test-deno:
-    name: Test Node
+    name: Test Deno
     runs-on: ubuntu-latest
 
     services:
@@ -60,9 +60,6 @@ jobs:
 
       - name: Test
         run: deno task test
-
-      - name: Test NPM Build
-        run: deno task npm --test
 
   test-node:
     name: Test Node
