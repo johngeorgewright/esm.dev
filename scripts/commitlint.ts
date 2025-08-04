@@ -16,11 +16,8 @@ const results = await Promise.all(
   messages.map((message) => lint(message, config.rules, config)),
 )
 
-const report = format({ results })
-
 if (results.some((result) => result.errors.length)) {
+  const report = format({ results })
   console.error(report)
   Deno.exit(1)
-} else {
-  console.info(report)
 }

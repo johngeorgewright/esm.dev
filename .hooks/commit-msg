@@ -1,9 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/hook.sh"
 
-deno run \
-  --allow-env \
-  --allow-read \
-  --allow-sys \
-  commitlint.ts \
-  $1
+deno task commitlint $1
