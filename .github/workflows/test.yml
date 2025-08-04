@@ -32,10 +32,15 @@ jobs:
         ports:
           - '4873:4873'
 
-    env:
-      ESM_ORIGIN: http://localhost:8080
-      ESM_STORAGE_PATH: /home/runner/docker-storage/esmd
-      REGISTRY: http://localhost:4873 
+    container:
+      image: ubuntu:latest
+      env:
+        ESM_ORIGIN: http://esm:8080
+        ESM_STORAGE_PATH: /esmd
+        REGISTRY: http://npm:4873
+      options: --user root
+      volumes:
+        - /home/runner/docker-storage/esmd:/esmd
 
     steps:
       - name: Checkout project
@@ -78,7 +83,7 @@ jobs:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
           LOG_LEVEL: debug
-        options: --user root
+        # options: --user root
         ports:
           - '8080:8080'
         volumes:
@@ -90,10 +95,15 @@ jobs:
         ports:
           - '4873:4873'
 
-    env:
-      ESM_ORIGIN: http://localhost:8080
-      ESM_STORAGE_PATH: /home/runner/docker-storage/esmd
-      REGISTRY: http://localhost:4873 
+    container:
+      image: ubuntu:latest
+      env:
+        ESM_ORIGIN: http://esm:8080
+        ESM_STORAGE_PATH: /esmd
+        REGISTRY: http://npm:4873
+      options: --user root
+      volumes:
+        - /home/runner/docker-storage/esmd:/esmd
 
     steps:
       - name: Checkout project
