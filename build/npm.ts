@@ -40,7 +40,7 @@ await build({
     },
     keywords: [
       'esm',
-      'ems.sh',
+      'esm.sh',
     ],
     author: 'John Wright <johngeorge.wright@gmail.com>',
     license: 'MIT',
