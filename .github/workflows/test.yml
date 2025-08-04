@@ -43,6 +43,8 @@ jobs:
         - /home/runner/docker-storage/esmd:/esmd
 
     steps:
+      - run: apt-get update -y && apt-get install -y unzip
+
       - name: Checkout project
         uses: actions/checkout@v4
 
@@ -106,6 +108,8 @@ jobs:
         - /home/runner/docker-storage/esmd:/esmd
 
     steps:
+      - run: apt-get update -y && apt-get install -y unzip
+
       - name: Checkout project
         uses: actions/checkout@v4
 
