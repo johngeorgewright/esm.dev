@@ -1,5 +1,5 @@
-export const esmOrigin = process.env.ESM_ORIGIN ?? 'http://localhost:8080'
+export const esmOrigin = Deno.env.get('ESM_ORIGIN') ?? 'http://localhost:8080'
 export const esmStoragePath =
-  process.env.ESM_STORAGE_PATH ?? 'docker-storage/esm/esmd'
-export const port = Number(process.env.PORT ?? '3000')
-export const registry = process.env.REGISTRY ?? 'http://localhost:4873'
+  Deno.env.get('ESM_STORAGE_PATH') ?? 'docker-storage/esm/esmd'
+export const port = Number(Deno.env.get('PORT') ?? '3000')
+export const registry = Deno.env.get('REGISTRY') ?? 'http://localhost:4873'

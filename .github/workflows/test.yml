@@ -9,13 +9,9 @@ concurrency:
   group: ${{ github.ref }}
 
 jobs:
-  test:
-    name: Test
+  test-deno:
+    name: Test Deno
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22, 24]
 
     services:
       esm:
@@ -37,7 +33,7 @@ jobs:
           - '4873:4873'
 
     container:
-      image: node:${{ matrix.node-version }}-alpine
+      image: ubuntu:latest
       env:
         ESM_ORIGIN: http://esm:8080
         ESM_STORAGE_PATH: /esmd
@@ -47,17 +43,85 @@ jobs:
         - /home/runner/docker-storage/esmd:/esmd
 
     steps:
+      - run: apt-get update -y && apt-get install -y unzip
+
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Install Bash
-        run: apk update && apk add bash
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
 
       - name: Install
-        run: npm ci
+        run: deno install
+
+      - name: Lint
+        run: deno lint
 
       - name: Test Compilation
-        run: npm run build
+        run: deno check
 
       - name: Test
-        run: npm test
+        run: deno task test
+
+  test-node:
+    name: Test Node
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22, 24]
+
+    services:
+      esm:
+        image: ghcr.io/esm-dev/esm.sh:latest
+        env:
+          NPM_TOKEN: fake
+          NPM_REGISTRY: http://npm:4873
+          LOG_LEVEL: debug
+        # options: --user root
+        ports:
+          - '8080:8080'
+        volumes:
+          - /home/runner/docker-storage/esmd/npm:/esmd/npm
+          - /home/runner/docker-storage/esmd/storage:/esmd/storage
+
+      npm:
+        image: verdaccio/verdaccio:latest
+        ports:
+          - '4873:4873'
+
+    container:
+      image: ubuntu:latest
+      env:
+        ESM_ORIGIN: http://esm:8080
+        ESM_STORAGE_PATH: /esmd
+        REGISTRY: http://npm:4873
+      options: --user root
+      volumes:
+        - /home/runner/docker-storage/esmd:/esmd
+
+    steps:
+      - run: apt-get update -y && apt-get install -y unzip
+
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Test NPM Build
+        run: deno task npm --test

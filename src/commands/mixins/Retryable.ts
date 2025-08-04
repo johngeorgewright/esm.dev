@@ -1,9 +1,12 @@
 import { Option } from 'clipanion'
 import { isNumber } from 'typanion'
 import type { CommandClass } from './CommandClass.ts'
+import type { AbstractConstructor } from '../../lib/AbstractConstructor.ts'
 
-export function Retryable<T extends CommandClass>(Base: T) {
-  abstract class Retryable extends Base {
+export function Retryable<T extends CommandClass>(
+  Base: T,
+): T & AbstractConstructor<RetryableMixin> {
+  abstract class Retryable extends Base implements RetryableMixin {
     readonly timeout = Option.String('-t,--timeout', '10000', {
       description: 'The amount of total ms to keep trying for',
       validator: isNumber(),
@@ -14,7 +17,7 @@ export function Retryable<T extends CommandClass>(Base: T) {
       validator: isNumber(),
     })
 
-    protected async retry(endpoint: string) {
+    async retry(endpoint: string) {
       const { EndpointUnavailableError, waitForEndpoint } = await import(
         '../../lib/until.ts'
       )
@@ -26,8 +29,16 @@ export function Retryable<T extends CommandClass>(Base: T) {
           return 1
         } else throw error
       }
+
+      return 0
     }
   }
 
   return Retryable
+}
+
+export interface RetryableMixin {
+  readonly timeout: number
+  readonly interval: number
+  retry(endpoint: string): Promise<number>
 }

@@ -17,7 +17,7 @@ export class StartCommand extends Servable(
       import('../lib/watch.ts'),
       import('../lib/server.ts'),
     ])
-    serve(this.port, this.esmOrigin)
+    await serve(this.port, this.esmOrigin)
     await this.eachPackagePath((packagePath) => watch(packagePath, this))
   }
 }

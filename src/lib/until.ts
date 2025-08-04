@@ -13,10 +13,14 @@ export async function until({
   while (!signal.aborted) {
     try {
       if (await Try(signal)) return true
-    } catch (error) {}
+    } catch (_error) {
+      //
+    }
     try {
       await setTimeout(interval, null, { signal })
-    } catch (error) {}
+    } catch (_error) {
+      //
+    }
   }
   return false
 }
@@ -39,8 +43,9 @@ export async function waitForEndpoint({
         return response.ok
       },
     }))
-  )
+  ) {
     throw new EndpointUnavailableError()
+  }
 }
 
 export class EndpointUnavailableError extends Error {

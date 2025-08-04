@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
-npm run --silent esm.dev -- wait-for-registry && \
-npm run --silent esm.dev -- login && \
-npm run --silent esm.dev -- $@
+deno task cli -- wait-for-registry && \
+deno task cli -- login && \
+deno task cli -- $@

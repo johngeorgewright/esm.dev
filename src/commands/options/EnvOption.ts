@@ -4,6 +4,7 @@ import type { StrictValidator } from 'typanion'
 /**
  * @see https://github.com/arcanis/clipanion/issues/174
  */
+// deno-lint-ignore ban-types
 export function EnvOption<T extends {}>(
   envName: string,
   descriptor: string,
@@ -16,12 +17,14 @@ export function EnvOption(
   opts?: { description?: string },
 ): string
 
+// deno-lint-ignore ban-types
 export function EnvOption<T extends {}>(
   envName: string,
   descriptor: string,
   opts: { description?: string; validator?: StrictValidator<unknown, T> } = {},
 ) {
-  return process.env[envName]
-    ? Option.String(descriptor, process.env[envName], opts)
+  const env = Deno.env.get(envName)
+  return env
+    ? Option.String(descriptor, env, opts)
     : Option.String(descriptor, { ...opts, required: true })
 }

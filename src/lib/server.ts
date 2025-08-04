@@ -2,8 +2,12 @@ import { queue } from './queue.ts'
 import { createServer } from 'node:http'
 import httpProxy from 'http-proxy'
 
-export function serve(port: number, esmOrigin: string): () => void {
+export async function serve(
+  port: number,
+  esmOrigin: string,
+): Promise<() => Promise<void>> {
   const proxy = httpProxy.createProxyServer()
+  const { promise, resolve } = Promise.withResolvers<void>()
 
   const server = createServer((req, res) => {
     queue(
@@ -13,7 +17,12 @@ export function serve(port: number, esmOrigin: string): () => void {
           req.on('error', reject)
           res.on('error', reject)
           res.on('close', resolve)
-          proxy.web(req, res, { target: esmOrigin })
+          proxy.web(
+            req,
+            res,
+            { followRedirects: true, target: esmOrigin },
+            reject,
+          )
         }),
     ).catch((error) => {
       res.statusCode = 500
@@ -23,11 +32,20 @@ export function serve(port: number, esmOrigin: string): () => void {
     })
   }).listen(port, () => {
     console.info('ESM proxy server listining on', server.address())
+    resolve()
   })
 
-  return () => {
-    console.info('closing the server')
-    server.closeAllConnections()
-    server.close()
-  }
+  await promise
+
+  return () =>
+    new Promise<void>((resolve, reject) => {
+      console.info('closing the server')
+      server.close((error) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
 }

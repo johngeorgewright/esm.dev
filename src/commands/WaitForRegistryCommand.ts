@@ -11,7 +11,7 @@ export class WaitForRegistryCommand extends Retryable(
     description: 'wait for the registry to be online',
   })
 
-  override async execute() {
+  override execute() {
     return this.retry(this.registry)
   }
 }

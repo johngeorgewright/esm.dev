@@ -51,7 +51,7 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
   override async execute() {
     const path = await import('node:path')
     this.templateDir = path.resolve(
-      import.meta.dirname,
+      import.meta.dirname ?? '',
       '..',
       '..',
       'templates',

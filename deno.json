@@ -1,0 +1,41 @@
+{
+  "name": "@jgw/esm.dev",
+  "version": "1.8.26",
+  "tasks": {
+    "cli": "deno run --allow-all ./src/cli.ts",
+    "commitlint": "deno run --allow-env --allow-read --allow-sys --allow-run scripts/commitlint.ts",
+    "hook": "deno run --allow-read --allow-run --allow-write https://deno.land/x/deno_hooks@0.1.2/mod.ts",
+    "npm": "deno run --allow-all ./scripts/npm.ts",
+    "test": "deno test --allow-all --trace-leaks"
+  },
+  "fmt": {
+    "semiColons": false,
+    "singleQuote": true
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-explicit-any"
+      ]
+    }
+  },
+  "exports": "./src/cli.ts",
+  "imports": {
+    "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.39.8",
+    "@std/encoding": "jsr:@std/encoding@^1.0.10",
+    "@types/http-proxy": "npm:@types/http-proxy@^1.17.16",
+    "clipanion": "npm:clipanion@^4.0.0-rc.4",
+    "clipanion-generator-command": "npm:clipanion-generator-command@^1.3.1",
+    "escape-string-regexp": "npm:escape-string-regexp@^5.0.0",
+    "glob": "npm:glob@^11.0.2",
+    "http-proxy": "npm:http-proxy@^1.18.1",
+    "ignore": "npm:ignore@^7.0.4",
+    "minimatch": "npm:minimatch@^10.0.1",
+    "minipass": "npm:minipass@^7.1.2",
+    "mustache": "npm:mustache@^4.2.0",
+    "typanion": "npm:typanion@^3.14.0",
+    "typedi": "npm:typedi@^0.10.0",
+    "zod": "npm:zod@^3.25.23",
+    "zx": "npm:zx@^8.5.4"
+  }
+}

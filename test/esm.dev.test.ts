@@ -1,84 +1,108 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  test,
-} from 'vitest'
-import { readFile, writeFile } from 'node:fs/promises'
+import { equal } from 'jsr:@std/assert/equal'
 import { setTimeout } from 'node:timers/promises'
-import { compose, T } from 'ramda'
-import { serve } from '../src/lib/server.js'
-import { watch } from '../src/lib/watch.js'
-import { login } from '../src/lib/login.js'
-import { waitForEndpoint } from '../src/lib/until.js'
+import { serve } from '../src/lib/server.ts'
+import { watch } from '../src/lib/watch.ts'
+import { login } from '../src/lib/login.ts'
+import { waitForEndpoint } from '../src/lib/until.ts'
 import { esmOrigin, esmStoragePath, port, registry } from './constants.ts'
+import { readJSONFile, writeJSONFile } from '../src/lib/fs.ts'
+// for Node.js
+import 'npm:disposablestack/auto'
 
-beforeAll(async () => {
-  await waitForEndpoint({ endpoint: registry })
-  await login(registry)
-})
-
-describe('access', () => {
-  start()
-
-  test.for([
-    {
-      endpoint: '/@esm.dev/package-1@0.0.1/es2022/package-1.mjs',
-      pckg: 'pacakge-1',
-    },
-    { endpoint: '/@esm.dev/package-2', pckg: 'package-2' },
-  ])('ESM server retreives watched $pckg', async ({ endpoint }) => {
-    const response = await fetch(`http://localhost:${port}${endpoint}`)
-    expect(await response.text()).matchSnapshot()
-  })
-})
-
-describe.for([
-  { legacyMethod: false, name: 'modern', interval: 100 },
-  { legacyMethod: true, name: 'legacy', interval: 3_000 },
-])('watching with $name method', ({ legacyMethod, interval }) => {
-  start(legacyMethod)
-
-  beforeEach(() => changeMainExport('./src/foos.ts'))
-  afterEach(() => changeMainExport('./src/foo.ts'))
-
-  test('is updated', { timeout: interval + 5_000 }, async () => {
-    const response1 = await fetch(
-      `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
-    )
-    expect(await response1.text()).toMatchSnapshot()
+Deno.test('dev environment', async (t) => {
+  await t.step('setup', async () => {
+    await waitForEndpoint({ endpoint: registry })
+    await login(registry)
   })
 
-  async function changeMainExport(to: string) {
-    const filename = 'test/packages/package-1/package.json'
-    const json = JSON.parse(await readFile(filename, 'utf-8'))
-    json.exports['.'] = to
-    await writeFile(filename, JSON.stringify(json, null, 2))
-    await setTimeout(interval)
+  await t.step('access', async (t) => {
+    await using _disposable = await start()
+
+    await t.step('package-1', async () => {
+      const response = await fetch(
+        `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+      )
+      equal(
+        (await response.text()).split('\n'),
+        [
+          '/* esm.sh - @esm.dev/package-1@0.0.1 */',
+          'function o(){return"foo"}export{o as foo};',
+          '//# sourceMappingURL=package-1.mjs.map',
+        ],
+      )
+    })
+
+    await t.step('package-2', async () => {
+      const response = await fetch(
+        `http://localhost:${port}/@esm.dev/package-2`,
+      )
+      equal(
+        (await response.text()).split('\n'),
+        [
+          '/* esm.sh - @esm.dev/package-2@0.0.1 */',
+          'export * from "/@esm.dev/package-2@0.0.1/denonext/package-2.mjs";',
+          '',
+        ],
+      )
+    })
+  })
+
+  for (
+    const { legacyMethod, interval, name } of [
+      { legacyMethod: false, name: 'modern', interval: 100 },
+      { legacyMethod: true, name: 'legacy', interval: 3_000 },
+    ]
+  ) {
+    await t.step(`watching with ${name} method`, async () => {
+      await using _disposable = await start(legacyMethod)
+      await using _change = await changeMainExport(interval)
+      const response = await fetch(
+        `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+      )
+      equal(
+        (await response.text()).split('\n'),
+        [
+          '/* esm.sh - @esm.dev/package-1@0.0.1 */',
+          'function o(){return"foo"}export{o as foo};',
+          '//# sourceMappingURL=package-1.mjs.map',
+        ],
+      )
+    })
   }
 })
 
-function start(legacyMethod?: boolean) {
-  let stop: () => void
+async function start(legacyMethod?: boolean): Promise<AsyncDisposable> {
+  const disposableStack = new AsyncDisposableStack()
+  disposableStack.adopt(await serve(port, esmOrigin), (stop) => stop())
+  disposableStack.adopt(
+    await watch('test/packages/package-1', {
+      registry,
+      esmStoragePath,
+      legacyMethod,
+    }),
+    (stop) => stop(),
+  )
+  disposableStack.adopt(
+    await watch('test/packages/package-2', {
+      registry,
+      esmStoragePath,
+      legacyMethod,
+    }),
+    (stop) => stop(),
+  )
+  return disposableStack
+}
 
-  beforeAll(async () => {
-    stop = compose(
-      serve(port, esmOrigin),
-      await watch('test/packages/package-1', {
-        registry,
-        esmStoragePath,
-        legacyMethod,
-      }).catch(() => T),
-      await watch('test/packages/package-2', {
-        registry,
-        esmStoragePath,
-        legacyMethod,
-      }).catch(() => T),
-    )
-  })
-
-  afterAll(() => stop())
+async function changeMainExport(interval: number): Promise<AsyncDisposable> {
+  const filename = 'test/packages/package-1/package.json'
+  const json = await readJSONFile(filename)
+  await writeJSONFile(
+    filename,
+    { ...json, exports: { '.': json.exports['.'] + '-changed' } },
+  )
+  await setTimeout(interval)
+  return {
+    [Symbol.asyncDispose]: () =>
+      Deno.writeTextFile(filename, JSON.stringify(json, null, 2)),
+  }
 }

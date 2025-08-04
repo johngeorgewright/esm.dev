@@ -1,3 +1,4 @@
+// @ts-types='npm:@types/mustache'
 import Mustache from 'mustache'
 import { Generator } from 'clipanion-generator-command/Generator'
 

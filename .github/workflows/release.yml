@@ -27,19 +27,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: 22
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Build NPM Package
+        run: deno task npm
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         with:
           extra_plugins: |
+            @semantic-release/exec
             @semantic-release/git
 
   push-image:

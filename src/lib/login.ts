@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process'
 
 export function login(registry: string): Promise<number> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const child = spawn('npm', ['login', '--registry', registry, '--quiet'])
 
     child.stderr.on('data', (d) => console.error(d.toString()))
@@ -24,6 +24,6 @@ export function login(registry: string): Promise<number> {
       }
     })
 
-    child.on('exit', resolve)
+    child.on('exit', (code) => code && reject(code) || resolve(code ?? 0))
   })
 }

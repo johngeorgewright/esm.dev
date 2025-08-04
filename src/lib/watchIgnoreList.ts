@@ -10,8 +10,8 @@ export async function getWatchIgnorer(dirname: string): Promise<Ignorer> {
   return ignoreList?.basename === '.gitignore'
     ? createGitIgnore(ignoreList.ignoreList)
     : ignoreList?.basename === '.npmignore'
-      ? createNPMIgnore(ignoreList.ignoreList)
-      : createNullIgnore()
+    ? createNPMIgnore(ignoreList.ignoreList)
+    : createNullIgnore()
 }
 
 export interface Ignorer {
@@ -42,7 +42,7 @@ async function getIgnoreList(dirname: string) {
 
     try {
       await access(filename, constants.F_OK)
-    } catch (error) {
+    } catch (_error) {
       continue
     }
 
@@ -51,7 +51,7 @@ async function getIgnoreList(dirname: string) {
     })
 
     const ignoreList: string[] = []
-    for await (const line of rl) if (line) ignoreList.push(line.trim())
+    for await (const line of rl) if (line.trim()) ignoreList.push(line.trim())
 
     return {
       basename,

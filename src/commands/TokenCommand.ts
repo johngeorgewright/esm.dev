@@ -9,11 +9,8 @@ export class TokenCommand extends RegistrySpecific(Command) {
   })
 
   override async execute() {
-    const [{ default: escapeStringRegexp }, { readFile }] = await Promise.all([
-      import('escape-string-regexp'),
-      import('node:fs/promises'),
-    ])
-    const npmrc = await readFile('~/.npmrc', 'utf-8')
+    const { default: escapeStringRegexp } = await import('escape-string-regexp')
+    const npmrc = await Deno.readTextFile('~/.npmrc')
     const url = new URL(this.registry)
     const regex = new RegExp(
       `^//${escapeStringRegexp(url.hostname)}/:_authToken=(.*)$`,
