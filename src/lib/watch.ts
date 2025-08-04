@@ -125,6 +125,7 @@ async function legacyWatch(
   beginTimer()
 
   function beginTimer() {
+    if (signal.aborted) return
     timer = setTimeout(
       () =>
         hashDirectory(dirname, ignorer, filename, republish)
