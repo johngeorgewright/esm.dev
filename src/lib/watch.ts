@@ -62,11 +62,15 @@ async function modernWatch(
   const ignorer = await getWatchIgnorer(dirname)
   const watcher = fsWatch(
     dirname,
-    { recursive: true /*, signal: abortController.signal */ },
+    { recursive: true, signal: abortController.signal },
     (_, filename) =>
       (filename && ignorer.ignores(filename)) ||
       republish(filename ?? '').catch((error) => {
-        if (error.name !== 'AbortError') throw error
+        if (
+          !(error instanceof Event && error.target instanceof AbortSignal) &&
+          error.name !== 'AbortError'
+        )
+          throw error
       }),
   )
 
@@ -76,7 +80,7 @@ async function modernWatch(
 async function legacyWatch(
   abortController: AbortController,
   dirname: string,
-  republish: (filename?: string | undefined) => Promise<void>,
+  republish: (filename?: string) => Promise<void>,
 ) {
   const ignorer = await getWatchIgnorer(dirname)
   const filename = tempfile()

@@ -25,7 +25,7 @@ export class InitCommand extends PackagePathSpecific(MustacheGeneratorCommand) {
 
   readonly esmStoragePath = Option.String(
     '-s,--esm-storage-path',
-    './docker-storage/esm/esmd',
+    './docker-storage/esm',
     {
       description: "Path to ESM.sh's storage",
     },

@@ -1,17 +1,19 @@
-import debounce from 'lodash.debounce'
-import throat from 'throat'
+import { debounce, Mutex } from 'es-toolkit'
 
-export async function queue<TResult, TArgs extends any[] = []>(
-  fn: (...args: TArgs) => Promise<TResult>,
+const mutex = new Mutex()
+
+export async function queue<TResult>(
+  fn: () => Promise<TResult>,
   signal?: AbortSignal,
 ): Promise<TResult> {
-  return _queue((...args) => {
+  await mutex.acquire()
+  try {
     signal?.throwIfAborted()
-    return fn(...(args as any))
-  })
+    return await fn()
+  } finally {
+    mutex.release()
+  }
 }
-
-const _queue = throat.default(1)
 
 /**
  * Just like debounce, but the first call will add a promise to the queue
@@ -30,16 +32,20 @@ export function queuedDebounce<Args extends unknown[], R>(
     promiseWithResolvers?.reject(reason)
   })
 
-  const debounced = debounce(async (...args: Args) => {
-    try {
-      const result = await fn(...args)
-      promiseWithResolvers?.resolve(result)
-    } catch (error: any) {
-      promiseWithResolvers?.reject(error)
-    } finally {
-      promiseWithResolvers = undefined
-    }
-  }, delay)
+  const debounced = debounce(
+    async (...args: Args) => {
+      try {
+        const result = await fn(...args)
+        promiseWithResolvers?.resolve(result)
+      } catch (error: any) {
+        promiseWithResolvers?.reject(error)
+      } finally {
+        promiseWithResolvers = undefined
+      }
+    },
+    delay,
+    { signal },
+  )
 
   return (...args: Args) => {
     const promise = start()

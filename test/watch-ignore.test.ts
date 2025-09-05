@@ -34,7 +34,7 @@ describe.each([
 
     const { watch } = await import('../src/lib/watch.js')
     stopWatching = await watch(packageDir, {
-      esmStoragePath: './docker-storage/esm/esmd',
+      esmStoragePath: './docker-storage/esm',
       registry: 'http://localhost:4873',
     })
   })

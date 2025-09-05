@@ -9,7 +9,7 @@ import {
 } from 'vitest'
 import { readFile, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { compose, T } from 'ramda'
+import { T } from 'ramda'
 import { serve } from '../src/lib/server.js'
 import { watch } from '../src/lib/watch.js'
 import { login } from '../src/lib/login.js'
@@ -39,46 +39,54 @@ describe('access', () => {
 describe.for([
   { legacyMethod: false, name: 'modern', interval: 100 },
   { legacyMethod: true, name: 'legacy', interval: 3_000 },
-])('watching with $name method', ({ legacyMethod, interval }) => {
-  start(legacyMethod)
+])(
+  'watching with $name method',
+  { concurrent: false },
+  ({ legacyMethod, interval }) => {
+    start(legacyMethod)
 
-  beforeEach(() => changeMainExport('./src/foos.ts'))
-  afterEach(() => changeMainExport('./src/foo.ts'))
+    beforeEach(() => changeMainExport('./src/foos.ts'))
+    afterEach(() => changeMainExport('./src/foo.ts'))
 
-  test('is updated', { timeout: interval + 5_000 }, async () => {
-    const response1 = await fetch(
-      `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
-    )
-    expect(await response1.text()).toMatchSnapshot()
-  })
+    test('is updated', { timeout: interval + 5_000 }, async () => {
+      const response1 = await fetch(
+        `http://localhost:${port}/@esm.dev/package-1@0.0.1/es2022/package-1.mjs`,
+      )
+      expect(await response1.text()).toMatchSnapshot()
+    })
 
-  async function changeMainExport(to: string) {
-    const filename = 'test/packages/package-1/package.json'
-    const json = JSON.parse(await readFile(filename, 'utf-8'))
-    json.exports['.'] = to
-    await writeFile(filename, JSON.stringify(json, null, 2))
-    await setTimeout(interval)
-  }
-})
+    async function changeMainExport(to: string) {
+      const filename = 'test/packages/package-1/package.json'
+      const json = JSON.parse(await readFile(filename, 'utf-8'))
+      json.exports['.'] = to
+      await writeFile(filename, JSON.stringify(json, null, 2))
+      await setTimeout(interval)
+    }
+  },
+)
 
 function start(legacyMethod?: boolean) {
-  let stop: () => void
+  let stopServe: () => Promise<void>
+  let stopWatch1: () => void
+  let stopWatch2: () => void
 
   beforeAll(async () => {
-    stop = compose(
-      serve(port, esmOrigin),
-      await watch('test/packages/package-1', {
-        registry,
-        esmStoragePath,
-        legacyMethod,
-      }).catch(() => T),
-      await watch('test/packages/package-2', {
-        registry,
-        esmStoragePath,
-        legacyMethod,
-      }).catch(() => T),
-    )
+    stopServe = await serve(port, esmOrigin)
+    stopWatch1 = await watch('test/packages/package-1', {
+      registry,
+      esmStoragePath,
+      legacyMethod,
+    }).catch(() => T)
+    stopWatch2 = await watch('test/packages/package-2', {
+      registry,
+      esmStoragePath,
+      legacyMethod,
+    }).catch(() => T)
   })
 
-  afterAll(() => stop())
+  afterAll(async () => {
+    await stopServe?.()
+    stopWatch1?.()
+    stopWatch2?.()
+  })
 }

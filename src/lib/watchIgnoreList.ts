@@ -51,7 +51,7 @@ async function getIgnoreList(dirname: string) {
     })
 
     const ignoreList: string[] = []
-    for await (const line of rl) if (line) ignoreList.push(line.trim())
+    for await (const line of rl) if (line.trim()) ignoreList.push(line.trim())
 
     return {
       basename,
