@@ -45,8 +45,8 @@ describe.for([
   ({ legacyMethod, interval }) => {
     start(legacyMethod)
 
-    beforeEach(() => changeMainExport('./src/foos.js'))
-    afterEach(() => changeMainExport('./src/foo.js'))
+    beforeEach(() => changeMainExport('./src/foos.ts'))
+    afterEach(() => changeMainExport('./src/foo.ts'))
 
     test('is updated', { timeout: interval + 5_000 }, async () => {
       const response1 = await fetch(
