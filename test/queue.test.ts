@@ -1,6 +1,6 @@
 import { describe, expect, vi, test } from 'vitest'
 import { setTimeout } from 'node:timers/promises'
-import { queue, queuedDebounce } from '../src/lib/queue.ts'
+import { queue, queuedDebounce } from '../src/lib/queue.js'
 
 describe('queuedDebounce', () => {
   test('debounces calls', async () => {

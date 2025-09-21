@@ -1,5 +1,5 @@
-import { PackagePathSpecific } from './mixins/PackagePathSpecific.ts'
-import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.ts'
+import { PackagePathSpecific } from './mixins/PackagePathSpecific.js'
+import { MustacheGeneratorCommand } from './MustacheGeneratorCommand.js'
 import { Option } from 'clipanion'
 import { isNumber } from 'typanion'
 

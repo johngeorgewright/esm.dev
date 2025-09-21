@@ -1,5 +1,5 @@
 import { Option } from 'clipanion'
-import type { CommandClass } from './CommandClass.ts'
+import type { CommandClass } from './CommandClass.js'
 
 export function PackagePathSpecific<T extends CommandClass>(Base: T) {
   abstract class PackagePathSpecific extends Base {

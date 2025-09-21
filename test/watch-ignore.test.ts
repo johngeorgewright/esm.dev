@@ -10,7 +10,7 @@ import {
 import * as path from 'node:path'
 import { rm, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { queue } from '../src/lib/queue.ts'
+import { queue } from '../src/lib/queue.js'
 
 describe.each([
   {

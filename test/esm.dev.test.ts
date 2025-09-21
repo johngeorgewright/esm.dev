@@ -14,7 +14,7 @@ import { serve } from '../src/lib/server.js'
 import { watch } from '../src/lib/watch.js'
 import { login } from '../src/lib/login.js'
 import { waitForEndpoint } from '../src/lib/until.js'
-import { esmOrigin, esmStoragePath, port, registry } from './constants.ts'
+import { esmOrigin, esmStoragePath, port, registry } from './constants.js'
 
 beforeAll(async () => {
   await waitForEndpoint({ endpoint: registry })
@@ -45,8 +45,8 @@ describe.for([
   ({ legacyMethod, interval }) => {
     start(legacyMethod)
 
-    beforeEach(() => changeMainExport('./src/foos.ts'))
-    afterEach(() => changeMainExport('./src/foo.ts'))
+    beforeEach(() => changeMainExport('./src/foos.js'))
+    afterEach(() => changeMainExport('./src/foo.js'))
 
     test('is updated', { timeout: interval + 5_000 }, async () => {
       const response1 = await fetch(

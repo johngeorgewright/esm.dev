@@ -5,10 +5,10 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": "./src/cli.ts"
+    ".": "./dist/lib/index.js"
   },
   "bin": {
-    "esm.dev": "./src/cli.ts"
+    "esm.dev": "./dist/cli.js"
   },
   "scripts": {
     "build": "npm run clean && tsc",

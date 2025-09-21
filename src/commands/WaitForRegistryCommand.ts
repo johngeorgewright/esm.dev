@@ -1,6 +1,6 @@
 import { Command } from 'clipanion'
-import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
-import { Retryable } from './mixins/Retryable.ts'
+import { RegistrySpecific } from './mixins/RegistrySpecific.js'
+import { Retryable } from './mixins/Retryable.js'
 
 export class WaitForRegistryCommand extends Retryable(
   RegistrySpecific(Command),
