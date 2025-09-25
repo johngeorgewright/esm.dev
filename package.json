@@ -31,9 +31,9 @@
   },
   "homepage": "https://github.com/johngeorgewright/esm.dev#readme",
   "devDependencies": {
-    "@commitlint/cli": "19.8.1",
-    "@commitlint/config-conventional": "19.8.1",
-    "@commitlint/types": "19.8.1",
+    "@commitlint/cli": "20.0.0",
+    "@commitlint/config-conventional": "20.0.0",
+    "@commitlint/types": "20.0.0",
     "@types/http-proxy": "^1.17.16",
     "@types/mustache": "^4.2.6",
     "@types/node": "^22.15.27",
