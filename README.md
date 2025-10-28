@@ -37,7 +37,8 @@ Once the above is running point your ESM modules to `localhost:3000`:
   }
 </script>
 <script type="module">
-  import Package1 from 'package1'
+  import Package1 from 'package-1'
+  import React from 'react
   // ...
 </script>
 ```
