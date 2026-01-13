@@ -6,8 +6,8 @@ export async function queue<TResult>(
   fn: () => Promise<TResult>,
   signal?: AbortSignal,
 ): Promise<TResult> {
-  await mutex.acquire()
   try {
+    await mutex.acquire()
     signal?.throwIfAborted()
     return await fn()
   } finally {
