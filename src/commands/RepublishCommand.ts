@@ -1,9 +1,10 @@
+import { Command } from 'clipanion'
 import { ESMDevCommand } from './ESMDevCommand.js'
 
 export class RepublishCommand extends ESMDevCommand {
-  static override paths = [['republish']]
+  static paths = [['republish']]
 
-  static override usage = this.Usage({
+  static usage = Command.Usage({
     description:
       'Removes the references, of given packages, from the ESM server and registry and republishes.',
   })
