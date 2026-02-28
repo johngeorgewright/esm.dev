@@ -26,7 +26,7 @@ jobs:
           LOG_LEVEL: debug
         options: --user root
         ports:
-          - '8080:8080'
+          - '8080:80'
         volumes:
           - /home/runner/docker-storage/esmd/npm:/esmd/npm
           - /home/runner/docker-storage/esmd/storage:/esmd/storage
