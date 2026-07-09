@@ -10,7 +10,7 @@ variable "TAG" {
 }
 
 variable "IMAGE" {
-  default = "ghcr.io/johngeorgewright/esm.dev"
+  default = "ghcr.io/jg-wright/esm.dev"
 }
 
 target "app" {

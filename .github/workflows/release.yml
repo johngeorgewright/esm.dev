@@ -22,7 +22,7 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -35,12 +35,21 @@ jobs:
       - name: Build
         run: npm run build
 
+      - uses: actions/create-github-app-token@v3
+        id: auth
+        with:
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PEM }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v6
         id: release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.auth.outputs.token }}
+          NPM_CONFIG_PROVENANCE: true
         with:
           extra_plugins: |
             @semantic-release/git
