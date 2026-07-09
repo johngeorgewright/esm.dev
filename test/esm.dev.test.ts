@@ -9,7 +9,6 @@ import {
 } from 'vitest'
 import { readFile, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { T } from 'ramda'
 import { serve } from '../src/lib/server.ts'
 import { watch } from '../src/lib/watch.ts'
 import { login } from '../src/lib/login.ts'
@@ -76,12 +75,12 @@ function start(legacyMethod?: boolean) {
       registry,
       esmStoragePath,
       legacyMethod,
-    }).catch(() => T)
+    }).catch(() => () => {})
     stopWatch2 = await watch('test/packages/package-2', {
       registry,
       esmStoragePath,
       legacyMethod,
-    }).catch(() => T)
+    }).catch(() => () => {})
   })
 
   afterAll(async () => {

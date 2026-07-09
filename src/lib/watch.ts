@@ -28,9 +28,9 @@ export async function watch(
   const abortController = new AbortController()
   const { signal } = abortController
 
-  const republishPackage = (filename: string = '') => {
+  const republishPackage = async (filename: string = '') => {
     console.info(`Change detected at ${packageRoot}/${filename}`)
-    return republish(packageRoot, opts).catch(console.error)
+    await republish(packageRoot, opts).catch(console.error)
   }
 
   try {
