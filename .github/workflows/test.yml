@@ -19,7 +19,7 @@ jobs:
 
     services:
       esm:
-        image: ghcr.io/esm-dev/esm.sh:latest
+        image: ghcr.io/esm-dev/esm.sh:v137_6
         env:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
@@ -28,17 +28,18 @@ jobs:
         ports:
           - '8080:80'
         volumes:
+          - /home/runner/docker-storage/esmd/npm:/esm/npm
           - /home/runner/docker-storage/esmd/storage:/esm/storage
 
       npm:
-        image: verdaccio/verdaccio:latest
+        image: verdaccio/verdaccio:6.2
         ports:
           - '4873:4873'
 
     container:
       image: node:${{ matrix.node-version }}-alpine
       env:
-        ESM_ORIGIN: http://esm:8080
+        ESM_ORIGIN: http://esm:80
         ESM_STORAGE_PATH: /esmd
         REGISTRY: http://npm:4873
       options: --user root
