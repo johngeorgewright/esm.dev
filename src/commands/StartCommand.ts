@@ -2,13 +2,14 @@ import { ESMDevCommand } from './ESMDevCommand.ts'
 import { Servable } from './mixins/Servable.ts'
 import { Watchable } from './mixins/Watchable.ts'
 import { ESMServed } from './mixins/ESMServed.ts'
+import { Command } from 'clipanion'
 
 export class StartCommand extends Servable(
   Watchable(ESMServed(ESMDevCommand)),
 ) {
-  static override paths = [['start']]
+  static paths = [['start']]
 
-  static override usage = this.Usage({
+  static usage = Command.Usage({
     description: 'Runs a server and concurrently watches a file system',
   })
 

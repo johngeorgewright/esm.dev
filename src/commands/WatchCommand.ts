@@ -1,10 +1,11 @@
+import { Command } from 'clipanion'
 import { ESMDevCommand } from './ESMDevCommand.ts'
 import { Watchable } from './mixins/Watchable.ts'
 
 export class WatchCommand extends Watchable(ESMDevCommand) {
-  static override paths = [['watch']]
+  static paths = [['watch']]
 
-  static override usage = this.Usage({
+  static usage = Command.Usage({
     description: 'Watches directories and republishes on changes',
   })
 
