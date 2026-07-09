@@ -17,7 +17,7 @@ on:
 
 jobs:
   push-image:
-    uses: johngeorgewright/workflows/.github/workflows/push-image.yml@main
+    uses: jg-wright/workflows/.github/workflows/push-image.yml@main
     permissions:
       packages: write
     with:
