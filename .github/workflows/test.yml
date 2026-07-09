@@ -19,7 +19,7 @@ jobs:
 
     services:
       esm:
-        image: ghcr.io/esm-dev/esm.sh:v137_6
+        image: ghcr.io/esm-dev/esm.sh:v137
         env:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
