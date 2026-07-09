@@ -34,8 +34,8 @@ services:
     ports:
       - '{{esmPort}}:8080'
     volumes:
-      - {{esmStoragePath}}/npm:/esmd/npm
-      - {{esmStoragePath}}/storage:/esmd/storage
+      - {{esmStoragePath}}/npm:/esm/npm
+      - {{esmStoragePath}}/storage:/esm/storage
 
   npm:
     image: verdaccio/verdaccio:latest

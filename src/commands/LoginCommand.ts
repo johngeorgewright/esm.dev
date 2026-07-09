@@ -1,5 +1,5 @@
 import { Command } from 'clipanion'
-import { RegistrySpecific } from './mixins/RegistrySpecific.js'
+import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 
 export class LoginCommand extends RegistrySpecific(Command) {
   static override paths = [['login']]
@@ -9,7 +9,7 @@ export class LoginCommand extends RegistrySpecific(Command) {
   })
 
   override async execute() {
-    const { login } = await import('../lib/login.js')
+    const { login } = await import('../lib/login.ts')
     return login(this.registry)
   }
 }

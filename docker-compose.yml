@@ -1,16 +1,16 @@
 services:
   esm:
-    image: ghcr.io/esm-dev/esm.sh:latest
+    image: ghcr.io/esm-dev/esm.sh:v137_6
     environment:
       - NPM_TOKEN=fake
       - NPM_REGISTRY=http://npm:4873
       - LOG_LEVEL=debug
     ports:
-      - '8080:8080'
+      - '8080:80'
     volumes:
-      - ./docker-storage/esm/npm:/esmd/npm
-      - ./docker-storage/esm/storage:/esmd/storage
+      - ./docker-storage/esm/npm:/esm/npm
+      - ./docker-storage/esm/storage:/esm/storage
   npm:
-    image: verdaccio/verdaccio:latest
+    image: verdaccio/verdaccio:6.7
     ports:
       - '4873:4873'

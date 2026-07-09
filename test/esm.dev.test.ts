@@ -9,12 +9,11 @@ import {
 } from 'vitest'
 import { readFile, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { T } from 'ramda'
-import { serve } from '../src/lib/server.js'
-import { watch } from '../src/lib/watch.js'
-import { login } from '../src/lib/login.js'
-import { waitForEndpoint } from '../src/lib/until.js'
-import { esmOrigin, esmStoragePath, port, registry } from './constants.js'
+import { serve } from '../src/lib/server.ts'
+import { watch } from '../src/lib/watch.ts'
+import { login } from '../src/lib/login.ts'
+import { waitForEndpoint } from '../src/lib/until.ts'
+import { esmOrigin, esmStoragePath, port, registry } from './constants.ts'
 
 beforeAll(async () => {
   await waitForEndpoint({ endpoint: registry })
@@ -76,12 +75,12 @@ function start(legacyMethod?: boolean) {
       registry,
       esmStoragePath,
       legacyMethod,
-    }).catch(() => T)
+    }).catch(() => () => {})
     stopWatch2 = await watch('test/packages/package-2', {
       registry,
       esmStoragePath,
       legacyMethod,
-    }).catch(() => T)
+    }).catch(() => () => {})
   })
 
   afterAll(async () => {

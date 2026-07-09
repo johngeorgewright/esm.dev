@@ -1,5 +1,5 @@
 import { Command } from 'clipanion'
-import { RegistrySpecific } from './mixins/RegistrySpecific.js'
+import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
 
 export class TokenCommand extends RegistrySpecific(Command) {
   static override paths = [['token']]

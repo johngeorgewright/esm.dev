@@ -20,12 +20,12 @@ jobs:
       version: ${{ steps.release.outputs.new_release_version }}
     steps:
       - name: Checkout project
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
@@ -36,7 +36,7 @@ jobs:
         run: npm run build
 
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@v6
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

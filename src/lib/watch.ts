@@ -1,11 +1,11 @@
 import { watch as fsWatch } from 'node:fs'
-import { republish } from './republish.js'
-import { getPackageMeta } from './getPackageMeta.js'
+import { republish } from './republish.ts'
+import { getPackageMeta } from './getPackageMeta.ts'
 import { readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { glob } from 'glob'
-import { queue, queuedDebounce } from './queue.js'
-import { getWatchIgnorer, type Ignorer } from './watchIgnoreList.js'
+import { queue, queuedDebounce } from './queue.ts'
+import { getWatchIgnorer, type Ignorer } from './watchIgnoreList.ts'
 import { tempfile } from 'zx'
 
 export async function watch(
@@ -28,9 +28,9 @@ export async function watch(
   const abortController = new AbortController()
   const { signal } = abortController
 
-  const republishPackage = (filename: string = '') => {
+  const republishPackage = async (filename: string = '') => {
     console.info(`Change detected at ${packageRoot}/${filename}`)
-    return republish(packageRoot, opts).catch(console.error)
+    await republish(packageRoot, opts).catch(console.error)
   }
 
   try {

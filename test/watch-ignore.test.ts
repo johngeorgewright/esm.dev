@@ -10,7 +10,7 @@ import {
 import * as path from 'node:path'
 import { rm, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
-import { queue } from '../src/lib/queue.js'
+import { queue } from '../src/lib/queue.ts'
 
 describe.each([
   {
@@ -28,11 +28,11 @@ describe.each([
   beforeEach(async () => {
     republishMockFn = vi.fn().mockResolvedValue(void 0)
 
-    vi.doMock('../src/lib/republish.js', () => ({
+    vi.doMock('../src/lib/republish.ts', () => ({
       republish: republishMockFn,
     }))
 
-    const { watch } = await import('../src/lib/watch.js')
+    const { watch } = await import('../src/lib/watch.ts')
     stopWatching = await watch(packageDir, {
       esmStoragePath: './docker-storage/esm',
       registry: 'http://localhost:4873',

@@ -10,7 +10,10 @@
     // Bundler mode
     "moduleResolution": "nodenext",
     "verbatimModuleSyntax": true,
+    "rootDir": "./src",
     "outDir": "dist",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
 
     // Best practices
     "strict": true,

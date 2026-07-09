@@ -1,13 +1,13 @@
 import { Command } from 'clipanion'
-import { RegistrySpecific } from './mixins/RegistrySpecific.js'
-import { Retryable } from './mixins/Retryable.js'
+import { RegistrySpecific } from './mixins/RegistrySpecific.ts'
+import { Retryable } from './mixins/Retryable.ts'
 
 export class WaitForRegistryCommand extends Retryable(
   RegistrySpecific(Command),
 ) {
-  static override paths = [['wait-for-registry'], ['wfr']]
+  static paths = [['wait-for-registry'], ['wfr']]
 
-  static override usage = this.Usage({
+  static usage = Command.Usage({
     description: 'wait for the registry to be online',
   })
 

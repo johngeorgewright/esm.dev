@@ -2,11 +2,10 @@ name: Test
 
 on:
   pull_request:
-  workflow_call:
 
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.ref }}
+  group: pr-${{ github.event.pull_request.number }}
 
 jobs:
   test:
@@ -15,31 +14,31 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22, 24]
+        node-version: [22, 24, 26]
 
     services:
       esm:
-        image: ghcr.io/esm-dev/esm.sh:latest
+        image: ghcr.io/esm-dev/esm.sh:v137_6
         env:
           NPM_TOKEN: fake
           NPM_REGISTRY: http://npm:4873
           LOG_LEVEL: debug
         options: --user root
         ports:
-          - '8080:8080'
+          - '8080:80'
         volumes:
-          - /home/runner/docker-storage/esmd/npm:/esmd/npm
-          - /home/runner/docker-storage/esmd/storage:/esmd/storage
+          - /home/runner/docker-storage/esmd/npm:/esm/npm
+          - /home/runner/docker-storage/esmd/storage:/esm/storage
 
       npm:
-        image: verdaccio/verdaccio:latest
+        image: verdaccio/verdaccio:6.2
         ports:
           - '4873:4873'
 
     container:
       image: node:${{ matrix.node-version }}-alpine
       env:
-        ESM_ORIGIN: http://esm:8080
+        ESM_ORIGIN: http://esm:80
         ESM_STORAGE_PATH: /esmd
         REGISTRY: http://npm:4873
       options: --user root
@@ -48,7 +47,7 @@ jobs:
 
     steps:
       - name: Checkout project
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Bash
         run: apk update && apk add bash

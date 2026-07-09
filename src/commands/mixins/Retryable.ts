@@ -1,6 +1,6 @@
 import { Option } from 'clipanion'
 import { isNumber } from 'typanion'
-import type { CommandClass } from './CommandClass.js'
+import type { CommandClass } from './CommandClass.ts'
 
 export function Retryable<T extends CommandClass>(Base: T) {
   abstract class Retryable extends Base {
@@ -15,9 +15,8 @@ export function Retryable<T extends CommandClass>(Base: T) {
     })
 
     protected async retry(endpoint: string) {
-      const { EndpointUnavailableError, waitForEndpoint } = await import(
-        '../../lib/until.js'
-      )
+      const { EndpointUnavailableError, waitForEndpoint } =
+        await import('../../lib/until.ts')
       try {
         await waitForEndpoint({ ...this, endpoint })
       } catch (error) {
