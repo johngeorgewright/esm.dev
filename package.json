@@ -68,6 +68,6 @@
     "zx": "^8.8.5"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-musl": "^4.41.1"
+    "@rollup/rollup-linux-x64-musl": "^4.62.2"
   }
 }
