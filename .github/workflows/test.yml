@@ -2,11 +2,10 @@ name: Test
 
 on:
   pull_request:
-  workflow_call:
 
 concurrency:
   cancel-in-progress: true
-  group: ${{ github.ref }}
+  group: ${{ github.event.pull_request.number }}
 
 jobs:
   test:
